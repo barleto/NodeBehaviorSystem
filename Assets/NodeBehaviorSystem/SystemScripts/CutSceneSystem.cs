@@ -9,11 +9,10 @@ public class CutSceneSystem : MonoBehaviour {
 
 	public bool startPlaying;
 	public CutScene initialCutScene;
+    [SerializeField] private CutScene _currentCutScene;
 	public UnityEvent onCutSceneStart;
 	public UnityEvent onCutSceneEnd;
-
-
-    [SerializeField] private CutScene _currentCutScene;
+    
     private Coroutine _playingBehaviorNodesCoroutine;
     private CutSceneNode _currentNode = null;
 
@@ -25,7 +24,6 @@ public class CutSceneSystem : MonoBehaviour {
 		if(startPlaying && initialCutScene != null){
 			PlayScene (initialCutScene);
 		}
-
 	}
 	
 	public void PlayScene(CutScene newScene){
@@ -41,13 +39,14 @@ public class CutSceneSystem : MonoBehaviour {
 	public IEnumerator PlayBehaviorNodesCoroutine(){
         foreach (CutSceneNode node in _currentCutScene.nodeListAsset.list)
         {
+            _currentNode = node;
             node.start();
-            while (!_currentNode.HasExecutionEnded())
+            while (!node.HasExecutionEnded())
             {
-                _currentNode.update();
+                node.update();
                 yield return null;
             }
-            _currentNode.end();
+            node.end();
         }
 	}
 

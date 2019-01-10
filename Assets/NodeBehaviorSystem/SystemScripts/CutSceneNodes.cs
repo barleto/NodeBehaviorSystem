@@ -40,7 +40,7 @@ public class CutSceneNode : ScriptableObject{
 
     public void EndNodeExecution()
     {
-        EndNodeExecution();
+        _hasExecutionEnded = true;
     }
 
     public bool HasExecutionEnded()

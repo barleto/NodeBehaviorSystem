@@ -21,11 +21,13 @@ public class CutSceneEditor : Editor {
 
 	private int typeIndex = 0;
 
+    private static bool _hasRegisteredUndo = false;
+
 	public override void OnInspectorGUI()
     {
         cutScene = (CutScene)target;
 
-        CreateNodeListAssetIfnecessary();
+        TryRegisterUndoCallback();
 
         DrawProperties();
 
@@ -50,35 +52,38 @@ public class CutSceneEditor : Editor {
     {
         if(GUILayout.Button("Create new Node List Asset"))
         {
-            CreateCutSceneAsset();
+            //TODO : Decide to make everything an asset or not. probably yes, because of prefabs for bundles.
+            //CreateCutSceneAsset();
+            cutScene.nodeListAsset = ScriptableObject.CreateInstance<CutSceneNodeList>();
         }
     }
 
     void CreateCutSceneAsset()
     {
-        string nameTag = "behaviourNodeList";
-        int fileSufixNumber = 0;
+        string nameTag = "BehaviourNodeList";
         var config = GetCutSceneSystemConfiguration();
         if (config == null)
         {
             Debug.LogError("Could not find an editor config for BehviorNodeSystem.");
             return;
         }
-        int numberedSufix = 0;
-        string finalFileName = config.GetPathToSaveNodeLists() + "/" + nameTag + numberedSufix + ".asset";
-        var lala = (Application.dataPath + "/" + finalFileName);
-        while (File.Exists(Application.dataPath + "/" + finalFileName)) 
+        int numberedSufix = -1;
+        string folderFinalName;
+        do
         {
             numberedSufix++;
-            finalFileName = config.GetPathToSaveNodeLists() + "/" + nameTag + numberedSufix + ".asset";
-        }
-        var newAsset = cutScene.nodeListAsset = ScriptableObject.CreateInstance<CutSceneNodeList>();
+            folderFinalName = config.GetPathToSaveNodeLists() + "/" + nameTag + numberedSufix;
+        } while (AssetDatabase.IsValidFolder("Assets/" + folderFinalName));
+        var lala = config.GetPathToSaveNodeLists()+ "   ,  " + nameTag +numberedSufix;
+        AssetDatabase.CreateFolder("Assets/" + config.GetPathToSaveNodeLists(), nameTag + numberedSufix);
+        var newAsset = ScriptableObject.CreateInstance<CutSceneNodeList>();
+        var assetName = folderFinalName + "/" + nameTag + numberedSufix + ".asset";
         try
         {
-            AssetDatabase.CreateAsset(cutScene.nodeListAsset, "Assets/" + finalFileName);
+            AssetDatabase.CreateAsset(newAsset, "Assets/" + assetName);
         } catch (Exception e)
         {
-            Debug.LogError("Could not create NodesList asset at path "+ finalFileName);
+            Debug.LogError("Could not create NodesList asset at path "+ "Assets/" + assetName);
             return;
         }
         cutScene.nodeListAsset = newAsset;
@@ -92,27 +97,14 @@ public class CutSceneEditor : Editor {
     private void DrawProperties()
     {
         //CutSceneSystem
-        cutScene.cutSceneSystem = GameObject.Find("CutSceneSystem").GetComponent<CutSceneSystem>();
+        if (cutScene.cutSceneSystem == null)
+        {
+            cutScene.cutSceneSystem = GameObject.Find("CutSceneSystem").GetComponent<CutSceneSystem>();
+        }
         cutScene.cutSceneSystem = (CutSceneSystem)EditorGUILayout.ObjectField("Cut Scene System", cutScene.cutSceneSystem, typeof(CutSceneSystem), true);
         cutScene.nodeListAsset = (CutSceneNodeList)EditorGUILayout.ObjectField("Cut Scene Asset:", cutScene.nodeListAsset, typeof(CutSceneNodeList), true);
-        if (cutScene.nodeListAsset != null)
-        {
-            cutScene.nodeListAsset = cutScene.nodeListAsset;
-        }
     }
 
-
-    private void CreateNodeListAssetIfnecessary()
-    {
-        /*if (cutScene.nodeListAsset == null)
-        {
-            cutScene.nodeListAsset = new List<CutSceneNode>();
-            cutScene.nodeListAsset = ScriptableObject.CreateInstance<CutSceneNodeList>();
-            cutScene.nodeListAsset = cutScene.nodeListAsset;
-            createCutSceneAsset();
-
-        }*/
-    }
 
     private void DrawNodesList()
     {
@@ -126,6 +118,7 @@ public class CutSceneEditor : Editor {
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("- Delete", GUILayout.Width(100)))
             {
+                Undo.RecordObject(cutScene.nodeListAsset, "Node deleted");
                 cutScene.nodeListAsset.list.Remove(node);
                 break;
             }
@@ -135,6 +128,7 @@ public class CutSceneEditor : Editor {
                 {
                     break;
                 }
+                Undo.RecordObject(cutScene.nodeListAsset, "Node moved up");
                 cutScene.nodeListAsset.list.RemoveAt(i);
                 cutScene.nodeListAsset.list.Insert(i - 1, node);
                 break;
@@ -145,14 +139,15 @@ public class CutSceneEditor : Editor {
                 {
                     break;
                 }
+                Undo.RecordObject(cutScene.nodeListAsset, "Node moved down");
                 cutScene.nodeListAsset.list.RemoveAt(i);
                 cutScene.nodeListAsset.list.Insert(i + 1, node);
                 break;
             }
             GUILayout.EndHorizontal();
 
+            Undo.RecordObject(node, "Node properties changed.");
             node.createUIDescription(cutScene, serializedObject);
-
             GUILayout.EndVertical();
         }
     }
@@ -171,9 +166,10 @@ public class CutSceneEditor : Editor {
 
         if (GUILayout.Button("Add Node", GUILayout.Width(100)))
         {
-            var newNode = (CutSceneNode)ScriptableObject.CreateInstance(sceneNodeTypesList[typeIndex]);
-            newNode.cutScene = cutScene;
-            cutScene.nodeListAsset.list.Add(newNode);
+            var newNode = Convert.ChangeType(ScriptableObject.CreateInstance(sceneNodeTypesList[typeIndex]), sceneNodeTypesList[typeIndex]);
+            ((CutSceneNode)newNode).cutScene = cutScene;
+            Undo.RecordObject(cutScene.nodeListAsset, "Node added");
+            cutScene.nodeListAsset.list.Add((CutSceneNode)newNode);
         }
         GUILayout.EndHorizontal();
     }
@@ -232,5 +228,20 @@ public class CutSceneEditor : Editor {
 		}
 		AssetDatabase.CreateAsset (node,url+"/nodes/node"+fileName+".asset");
 	}
+
+    private void TryRegisterUndoCallback()
+    {
+        if (!_hasRegisteredUndo)
+        {
+            Undo.undoRedoPerformed += OnUndo;
+            _hasRegisteredUndo = true;
+        }
+    }
+
+    private void OnUndo()
+    {
+        Debug.Log("hu3");
+        Repaint();
+    }
 }
 #endif
