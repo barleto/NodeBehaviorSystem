@@ -113,53 +113,53 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1197653224
+--- !u!1 &371109255
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 1197653226}
-  - component: {fileID: 1197653225}
+  - component: {fileID: 371109257}
+  - component: {fileID: 371109256}
   m_Layer: 0
-  m_Name: CutSceneSystem
+  m_Name: BehaviorNodeSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1197653225
+--- !u!114 &371109256
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1197653224}
+  m_GameObject: {fileID: 371109255}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bf2f5ae3f6e0447cb735a86d02dfda2, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dedb42e2ce6348748a884e9efe4ca1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startPlaying: 1
-  initialCutScene: {fileID: 1916493139}
-  _currentCutScene: {fileID: 0}
-  onCutSceneStart:
+  initialBehaviorList: {fileID: 2036124565}
+  _currentBehaviorList: {fileID: 0}
+  onBehaviorListStart:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  onCutSceneEnd:
+  onBehaviorListEnd:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   switchVariables: []
---- !u!4 &1197653226
+--- !u!4 &371109257
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1197653224}
+  m_GameObject: {fileID: 371109255}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -248,90 +248,45 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1916493138
+--- !u!1 &2036124564
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 1395100792454508, guid: df96857550b892b449fbfc86dceaecaf,
-    type: 2}
-  m_PrefabInternal: {fileID: 1965575012}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 1916493140}
-  - component: {fileID: 1916493139}
+  - component: {fileID: 2036124566}
+  - component: {fileID: 2036124565}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Example
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1916493139
+--- !u!114 &2036124565
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114843740410208510, guid: df96857550b892b449fbfc86dceaecaf,
-    type: 2}
-  m_PrefabInternal: {fileID: 1965575012}
-  m_GameObject: {fileID: 1916493138}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2036124564}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7eecba7679e747e98f7e2c19a085571, type: 3}
+  m_Script: {fileID: 11500000, guid: fbefca88657c747509ac3e803a13f81c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cutSceneSystem: {fileID: 1197653225}
-  nodeListAsset: {fileID: 11400000, guid: c21d5c6b6ab1bc3458b0b0b239eef8da, type: 2}
---- !u!4 &1916493140
+  behaviorNodeSystem: {fileID: 371109256}
+  nodeListAsset: {fileID: 0}
+--- !u!4 &2036124566
 Transform:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf,
-    type: 2}
-  m_PrefabInternal: {fileID: 1965575012}
-  m_GameObject: {fileID: 1916493138}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2036124564}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.11717998, y: -0.24002151, z: -0.2960822}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1965575012
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0.11717998
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -0.24002151
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -0.2960822
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604393790908808, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: df96857550b892b449fbfc86dceaecaf, type: 2}
-  m_IsPrefabParent: 0

@@ -11,5 +11,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0823d58b40252e4b83462f876b433df, type: 3}
   m_Name: Node0
   m_EditorClassIdentifier: 
-  cutScene: {fileID: 0}
-  text: 
+  behaviourList: {fileID: 0}
+  text: A log

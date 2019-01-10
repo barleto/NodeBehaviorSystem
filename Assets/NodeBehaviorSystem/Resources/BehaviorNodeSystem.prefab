@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000014250520334}
-  - component: {fileID: 114000012733170932}
+  - component: {fileID: 114568417646654116}
   m_Layer: 0
-  m_Name: CutSceneSystem
+  m_Name: BehaviorNodeSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114000012733170932
+--- !u!114 &114568417646654116
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,11 +48,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000013478436424}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bf2f5ae3f6e0447cb735a86d02dfda2, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dedb42e2ce6348748a884e9efe4ca1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startPlaying: 0
   initialCutScene: {fileID: 0}
+  _currentCutScene: {fileID: 0}
   onCutSceneStart:
     m_PersistentCalls:
       m_Calls: []
@@ -63,5 +64,4 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _currentCutScene: {fileID: 0}
   switchVariables: []

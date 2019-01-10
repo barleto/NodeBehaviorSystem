@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Name: BehaviorNodeSystemConfiguration
   m_EditorClassIdentifier: 
   _pathToSaveNodeLists: Assets/NodeBehaviorSystem/NodeLists
+  _behaviorSystemPrefab: {fileID: 1000013478436424, guid: a1c3918d60f324bf79829c422f31e295,
+    type: 2}

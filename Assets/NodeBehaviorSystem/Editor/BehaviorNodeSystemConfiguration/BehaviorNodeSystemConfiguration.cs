@@ -2,12 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BehaviorNodeSystemConfiguration : ScriptableObject {
-
-    [SerializeField] private string _pathToSaveNodeLists = "Assets/NodeBehaviorSystem/NodesList/";
-
-    public string GetPathToSaveNodeLists()
+namespace BehaviorNode
+{
+    public class BehaviorNodeSystemConfiguration : ScriptableObject
     {
-        return  _pathToSaveNodeLists;
+
+        [SerializeField] private string _pathToSaveNodeLists = "Assets/NodeBehaviorSystem/NodesList/";
+        [SerializeField] private GameObject _behaviorSystemPrefab;
+
+        public string GetPathToSaveNodeLists()
+        {
+            return _pathToSaveNodeLists;
+        }
+
+        public GameObject GetSystemPrefab()
+        {
+            return _behaviorSystemPrefab;
+        }
     }
 }

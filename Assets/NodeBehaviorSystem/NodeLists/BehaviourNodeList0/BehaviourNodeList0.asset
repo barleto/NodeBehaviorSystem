@@ -8,9 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd7b8c511c4d34367a585c411d564a37, type: 3}
+  m_Script: {fileID: 11500000, guid: bd78e4581888b451698d4fbe5024eccb, type: 3}
   m_Name: BehaviourNodeList0
   m_EditorClassIdentifier: 
-  list:
-  - {fileID: 11400000, guid: af93b28ef9680214d837cebeb2ba0b07, type: 2}
-  - {fileID: 11400000, guid: 453164cd9f63ed348871699b302c7292, type: 2}
+  list: []
