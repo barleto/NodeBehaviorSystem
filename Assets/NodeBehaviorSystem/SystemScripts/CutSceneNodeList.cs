@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public class CutSceneNodeList : ScriptableObject {
-
-	[SerializeField]
+    [HideInInspector]
 	public List<CutSceneNode> list = new List<CutSceneNode>();
 
 }

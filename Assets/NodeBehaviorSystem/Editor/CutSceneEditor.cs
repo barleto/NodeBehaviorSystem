@@ -14,8 +14,6 @@ public class CutSceneEditor : Editor {
 
 	CutScene cutScene;
 	private int index1,index2;
-	private bool grouping = false;
-	private bool changeOrder = false;
 	private CutSceneNode nodeToChange = null;
 	private int directionToChange = 0;
 	private List<string> listOfSwitches = new List<string>();
@@ -119,99 +117,43 @@ public class CutSceneEditor : Editor {
     private void DrawNodesList()
     {
         //show list
-        grouping = false;
-        foreach (CutSceneNode node in cutScene.nodeListAsset.list)
+
+        for( int i = 0; i < cutScene.nodeListAsset.list.Count() ; i++)
         {
+            var node = cutScene.nodeListAsset.list[i];
             GUILayout.BeginVertical("box");
 
-            if (!(node is CompositeCutSceneNode))
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("- Delete", GUILayout.Width(100)))
             {
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("- Delete", GUILayout.Width(100)))
-                {
-                    AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(node));
-                    cutScene.nodeListAsset.list.Remove(node);
-                }
-                if (GUILayout.Button("[MOVE UP]", GUILayout.Width(100)))
-                {
-                    changeOrder = true;
-                    nodeToChange = node;
-                    directionToChange = -1;
-                }
-                if (GUILayout.Button("[MOVE DOWN]", GUILayout.Width(100)))
-                {
-                    changeOrder = true;
-                    nodeToChange = node;
-                    directionToChange = 1;
-                }
-                GUILayout.EndHorizontal();
-                node.createUIDescription(cutScene, serializedObject);
-                if (cutScene.nodeListAsset.list.IndexOf(node) + 1 < cutScene.nodeListAsset.list.Count)
-                {
-                    if (GUILayout.Button("Group With Next Node"))
-                    {
-                        grouping = true;
-                        index1 = cutScene.nodeListAsset.list.IndexOf(node);
-                        index2 = index1 + 1;
-                    }
-                }
+                cutScene.nodeListAsset.list.Remove(node);
+                break;
             }
-            else
+            if (GUILayout.Button("[MOVE UP]", GUILayout.Width(100)))
             {
-                CompositeCutSceneNode nodeC = (CompositeCutSceneNode)node;
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("[MOVE UP]", GUILayout.Width(100)))
+                if (i == 0)
                 {
-                    changeOrder = true;
-                    nodeToChange = node;
-                    directionToChange = -1;
+                    break;
                 }
-                if (GUILayout.Button("[MOVE DOWN]", GUILayout.Width(100)))
-                {
-                    changeOrder = true;
-                    nodeToChange = node;
-                    directionToChange = 1;
-                }
-                GUILayout.EndHorizontal();
-                if (nodeC.children.Count > 0)
-                {
-                    for (int j = 0; j < nodeC.children.Count; j++)
-                    {
-                        CutSceneNode nodeSC = nodeC.children[j];
-                        if (GUILayout.Button("- Delete", GUILayout.Width(100)))
-                        {
-                            AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(nodeSC));
-                            nodeC.children.Remove(nodeSC);
-                        }
-                        nodeSC.createUIDescription(cutScene, serializedObject);
-                        if (j + 1 < nodeC.children.Count)
-                        {
-                            if (GUILayout.Button("-- Break Group Here --"))
-                            {
-                                CompositeCutSceneNode newComp = new CompositeCutSceneNode();
-                                newComp.children = nodeC.children.GetRange(j + 1, nodeC.children.Count - 1 - j);
-                                nodeC.children.RemoveRange(j + 1, nodeC.children.Count - 1 - j);
-                                int index = cutScene.nodeListAsset.list.IndexOf(node);
-                                cutScene.nodeListAsset.list.Insert(index + 1, newComp);
-                            }
-                        }
-                    }
-                }
-
-                if (cutScene.nodeListAsset.list.IndexOf(node) + 1 < cutScene.nodeListAsset.list.Count)
-                {
-                    if (GUILayout.Button("Group With Next Node"))
-                    {
-                        grouping = true;
-                        index1 = cutScene.nodeListAsset.list.IndexOf(node);
-                        index2 = index1 + 1;
-                    }
-                }
-
+                cutScene.nodeListAsset.list.RemoveAt(i);
+                cutScene.nodeListAsset.list.Insert(i - 1, node);
+                break;
             }
-            //nodeS.playWithNext = EditorGUILayout.Toggle("Play With Next: ",nodeS.playWithNext);
+            if (GUILayout.Button("[MOVE DOWN]", GUILayout.Width(100)))
+            {
+                if (i == cutScene.nodeListAsset.list.Count()-1)
+                {
+                    break;
+                }
+                cutScene.nodeListAsset.list.RemoveAt(i);
+                cutScene.nodeListAsset.list.Insert(i + 1, node);
+                break;
+            }
+            GUILayout.EndHorizontal();
+
+            node.createUIDescription(cutScene, serializedObject);
+
             GUILayout.EndVertical();
-            EditorUtility.SetDirty(cutScene);
         }
     }
 
@@ -229,10 +171,9 @@ public class CutSceneEditor : Editor {
 
         if (GUILayout.Button("Add Node", GUILayout.Width(100)))
         {
-            CutSceneNode newNode = (CutSceneNode)ScriptableObject.CreateInstance(sceneNodeTypesList[typeIndex]);
+            var newNode = (CutSceneNode)ScriptableObject.CreateInstance(sceneNodeTypesList[typeIndex]);
             newNode.cutScene = cutScene;
             cutScene.nodeListAsset.list.Add(newNode);
-            createNodeAsset(newNode);
         }
         GUILayout.EndHorizontal();
     }
