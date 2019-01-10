@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     [System.Serializable]
     public class BehaviorNodesSystem : MonoBehaviour
     {
 
         public bool startPlaying;
-        public BehaviorList initialBehaviorList;
-        [SerializeField] private BehaviorList _currentBehaviorList;
+        public BehaviorListHolder initialBehaviorList;
+        [SerializeField] private BehaviorListHolder _currentBehaviorList;
         public UnityEvent onBehaviorListStart;
         public UnityEvent onBehaviorListEnd;
 
         private Coroutine _playingBehaviorNodesCoroutine;
-        private BehaviorListNode _currentNode = null;
+        private BehaviorNode _currentNode = null;
 
         //switch sytem variables
         [HideInInspector]
@@ -31,7 +31,7 @@ namespace BehaviorNode
             }
         }
 
-        public void PlayScene(BehaviorList newScene)
+        public void PlayScene(BehaviorListHolder newScene)
         {
             EndCurrentBehaviorList();
             _currentBehaviorList = newScene;
@@ -46,7 +46,7 @@ namespace BehaviorNode
 
         public IEnumerator PlayBehaviorNodesCoroutine()
         {
-            foreach (BehaviorListNode node in _currentBehaviorList.nodeListAsset.list)
+            foreach (BehaviorNode node in _currentBehaviorList.nodeListAsset.list)
             {
                 _currentNode = node;
                 node.behaviourList = _currentBehaviorList;

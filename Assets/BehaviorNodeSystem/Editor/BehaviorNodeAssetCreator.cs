@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.IO;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
 
     public class BehaviorNodeAssetCreator
@@ -45,7 +45,7 @@ namespace BehaviorNode
             return newAsset;
         }
 
-        public BehaviorListNode CreateNodeAsset(BehaviorNodesList list, System.Type type)
+        public BehaviorNode CreateNodeAsset(BehaviorNodesList list, System.Type type)
         {
             var path = AssetDatabase.GetAssetPath(list);
             var directoryPath = Path.GetDirectoryName(path);
@@ -68,7 +68,7 @@ namespace BehaviorNode
                 Debug.LogError("Could not create Node asset at path " + nodeFinalPath);
                 return null;
             }
-            return (BehaviorListNode)newNode;
+            return (BehaviorNode)newNode;
         }
     }
 }

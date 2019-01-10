@@ -8,14 +8,14 @@ using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
 
-    [CustomEditor(typeof(BehaviorList))]
+    [CustomEditor(typeof(BehaviorListHolder))]
     public class BehaviorListEditor : Editor
     {
 
-        BehaviorList behaviorList;
+        BehaviorListHolder behaviorList;
         private List<string> listOfSwitches = new List<string>();
 
         private int typeIndex = 0;
@@ -24,7 +24,7 @@ namespace BehaviorNode
 
         public override void OnInspectorGUI()
         {
-            behaviorList = (BehaviorList)target;
+            behaviorList = (BehaviorListHolder)target;
 
             TryRegisterUndoCallback();
 
@@ -140,9 +140,9 @@ namespace BehaviorNode
             //draw buttons for adding and subtracting the behavior list sequence:
             GUILayout.BeginHorizontal();
             var sceneNodeTypesList = Assembly
-                               .GetAssembly(typeof(BehaviorListNode))
+                               .GetAssembly(typeof(BehaviorNode))
                                .GetTypes()
-                               .Where(t => t.IsSubclassOf(typeof(BehaviorListNode))).ToArray();
+                               .Where(t => t.IsSubclassOf(typeof(BehaviorNode))).ToArray();
             var sceneNodeTypesnames = sceneNodeTypesList.Select((t) => t.Name).ToArray();
 
             typeIndex = EditorGUILayout.Popup("Type of node: ", typeIndex, sceneNodeTypesnames);
@@ -180,7 +180,7 @@ namespace BehaviorNode
             GameObject obj = (GameObject)Selection.activeGameObject;
             if (obj != null)
             {
-                Undo.AddComponent(obj, typeof(BehaviorList));
+                Undo.AddComponent(obj, typeof(BehaviorListHolder));
             }
         }
 
@@ -222,13 +222,13 @@ namespace BehaviorNode
             return false;
         }
 
-        void createNodeAsset(BehaviorListNode node)
+        void createNodeAsset(BehaviorNode node)
         {
             string url = AssetDatabase.GetAssetPath(behaviorList.nodeListAsset);
             int index = AssetDatabase.GetAssetPath(behaviorList.nodeListAsset).LastIndexOf("/");
             url = url.Substring(0, index);
             int fileName = 0;
-            while (AssetDatabase.LoadAssetAtPath<BehaviorListNode>(url + "/nodes/node" + fileName + ".asset") != null)
+            while (AssetDatabase.LoadAssetAtPath<BehaviorNode>(url + "/nodes/node" + fileName + ".asset") != null)
             {
                 fileName++;
             }

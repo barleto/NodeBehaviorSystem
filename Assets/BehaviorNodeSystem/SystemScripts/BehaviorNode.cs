@@ -4,20 +4,20 @@ using System.Collections;
 using UnityEditor;
 #endif
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     [System.Serializable]
-    public class BehaviorListNode : ScriptableObject
+    public class BehaviorNode : ScriptableObject
     {
 
         private bool _hasExecutionEnded = false;
         [SerializeField]
-        public BehaviorList behaviourList;
+        public BehaviorListHolder behaviourList;
 
 #if UNITY_EDITOR
         /*In this function, you define what will appear in the UI of the BehaviorList.
         Just populate with GUILayout funcitons*/
-        virtual public void createUIDescription(BehaviorList behaviorList, SerializedObject serializedObject)
+        virtual public void createUIDescription(BehaviorListHolder behaviorList, SerializedObject serializedObject)
         {
 
         }

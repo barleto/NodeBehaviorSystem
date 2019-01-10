@@ -1,14 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     [System.Serializable]
     public class BehaviorNodesList : ScriptableObject
     {
 
-        public List<BehaviorListNode> list = new List<BehaviorListNode>();
+        public List<BehaviorNode> list = new List<BehaviorNode>();
 
     }
 }

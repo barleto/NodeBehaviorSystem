@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     [System.Serializable]
     public class GameSwitch : ScriptableObject

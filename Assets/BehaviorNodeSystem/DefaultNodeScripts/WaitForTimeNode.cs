@@ -6,16 +6,16 @@ using UnityEditor;
 #endif
 using UnityEngine.Events;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     [System.Serializable]
-    public class WaitForTimeNode : BehaviorListNode
+    public class WaitForTimeNode : BehaviorNode
     {
         [SerializeField]
         public float timeToWait = 1;
         private float timePassed;
 #if UNITY_EDITOR
-        public override void createUIDescription(BehaviorList BehaviorList, SerializedObject serializedObject)
+        public override void createUIDescription(BehaviorListHolder BehaviorList, SerializedObject serializedObject)
         {
             GUILayout.Label("<<Time to wait>>");
             timeToWait = EditorGUILayout.FloatField("Time to wait: ", timeToWait);

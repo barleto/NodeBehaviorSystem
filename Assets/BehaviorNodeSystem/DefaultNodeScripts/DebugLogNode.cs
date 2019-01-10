@@ -5,16 +5,16 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     [CreateAssetMenu()]
-    public class DebugLogNode : BehaviorListNode
+    public class DebugLogNode : BehaviorNode
     {
         [SerializeField]
         public string text = "";
 
 #if UNITY_EDITOR
-        public override void createUIDescription(BehaviorList BehaviorList, SerializedObject serializedObject)
+        public override void createUIDescription(BehaviorListHolder BehaviorList, SerializedObject serializedObject)
         {
             GUILayout.Label("<<Debug Log>>");
             text = EditorGUILayout.TextArea(text);

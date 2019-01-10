@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     public class BehaviorNodeSystemConfiguration : ScriptableObject
     {

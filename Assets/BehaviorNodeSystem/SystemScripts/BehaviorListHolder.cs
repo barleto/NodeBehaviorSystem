@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
-    public class BehaviorList : MonoBehaviour
+    public class BehaviorListHolder : MonoBehaviour
     {
         public BehaviorNodesSystem behaviorNodeSystem;
         public BehaviorNodesList nodeListAsset;

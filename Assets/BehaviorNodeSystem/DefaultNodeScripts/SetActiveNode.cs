@@ -6,17 +6,17 @@ using UnityEditor;
 #endif
 using UnityEngine.Events;
 
-namespace BehaviorNode
+namespace BehaviorNodePlugin
 {
     [System.Serializable]
-    public class SetActiveNode : BehaviorListNode
+    public class SetActiveNode : BehaviorNode
     {
         [SerializeField]
         public GameObject gameObj;
         public bool active = false;
 
 #if UNITY_EDITOR
-        public override void createUIDescription(BehaviorList BehaviorList, SerializedObject serializedObject)
+        public override void createUIDescription(BehaviorListHolder BehaviorList, SerializedObject serializedObject)
         {
             SetActiveNode node = this;
             GUILayout.Label("<<SetActiveNode>>");
