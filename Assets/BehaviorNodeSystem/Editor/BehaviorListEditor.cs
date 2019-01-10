@@ -172,7 +172,7 @@ namespace BehaviorNode
             return null;
         }
 
-        const string pluginName = "BehaviourNodes";
+        const string pluginName = "Plugins/BehaviourNodes";
 
         [MenuItem(pluginName + "/Add BehaviourList Component to gameObject")]
         static void AddBehaviorListComponentToGameObject()
