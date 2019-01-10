@@ -27,18 +27,18 @@ namespace BehaviorNode
         }
 #endif
 
-        public override void start()
+        public override void OnStart()
         {
             gameObj.SetActive(active);
             EndNodeExecution();
         }
 
-        public override void update()
+        public override void OnUpdate()
         {
 
         }
 
-        public override void end()
+        public override void OnEnd()
         {
 
         }

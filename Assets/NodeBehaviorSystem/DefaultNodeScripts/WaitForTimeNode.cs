@@ -22,12 +22,12 @@ namespace BehaviorNode
         }
 #endif
 
-        public override void start()
+        public override void OnStart()
         {
             timePassed = 0;
         }
 
-        public override void update()
+        public override void OnUpdate()
         {
             timePassed += Time.deltaTime;
             if (timePassed >= timeToWait)
@@ -36,7 +36,7 @@ namespace BehaviorNode
             }
         }
 
-        public override void end()
+        public override void OnEnd()
         {
 
         }

@@ -157,7 +157,6 @@ namespace BehaviorNode
                 }
                 var assetCreator = new BehaviorNodeAssetCreator(config.GetPathToSaveNodeLists());
                 var newNode = assetCreator.CreateNodeAsset(behaviorList.nodeListAsset, sceneNodeTypesList[typeIndex]);
-                newNode.behaviourList = behaviorList;
                 behaviorList.nodeListAsset.list.Add(newNode);
             }
             GUILayout.EndHorizontal();

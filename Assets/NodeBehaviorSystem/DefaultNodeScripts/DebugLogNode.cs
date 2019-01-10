@@ -21,18 +21,18 @@ namespace BehaviorNode
         }
 #endif
 
-        public override void start()
+        public override void OnStart()
         {
 
         }
 
-        public override void update()
+        public override void OnUpdate()
         {
             Debug.Log(text);
             EndNodeExecution();
         }
 
-        public override void end()
+        public override void OnEnd()
         {
 
         }

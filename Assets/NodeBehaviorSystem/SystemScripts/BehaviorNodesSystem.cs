@@ -49,13 +49,15 @@ namespace BehaviorNode
             foreach (BehaviorListNode node in _currentBehaviorList.nodeListAsset.list)
             {
                 _currentNode = node;
-                node.start();
+                node.behaviourList = _currentBehaviorList;
+                node.init();
+                node.OnStart();
                 while (!node.HasExecutionEnded())
                 {
-                    node.update();
+                    node.OnUpdate();
                     yield return null;
                 }
-                node.end();
+                node.OnEnd();
             }
             onBehaviorListEnd.Invoke();
         }
@@ -69,7 +71,7 @@ namespace BehaviorNode
             if (_currentNode != null)
             {
                 _currentNode.EndNodeExecution();
-                _currentNode.end();
+                _currentNode.OnEnd();
             }
             if (_playingBehaviorNodesCoroutine != null)
             {

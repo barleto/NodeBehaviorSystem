@@ -23,19 +23,23 @@ namespace BehaviorNode
         }
 #endif
 
+        public void init(){
+            _hasExecutionEnded = false;
+        }
+
         //executed once to initialize the node
-        virtual public void start()
+        virtual public void OnStart()
         {
 
         }
 
         //executed each frame
-        virtual public void update()
+        virtual public void OnUpdate()
         {
         }
 
         //executed when the node finished executing. Finalize thng if you want to.
-        virtual public void end()
+        virtual public void OnEnd()
         {
 
         }
