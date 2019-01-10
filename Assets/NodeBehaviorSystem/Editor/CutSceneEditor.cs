@@ -13,11 +13,7 @@ using UnityEditor;
 public class CutSceneEditor : Editor {
 
 	CutScene cutScene;
-	private int index1,index2;
-	private CutSceneNode nodeToChange = null;
-	private int directionToChange = 0;
 	private List<string> listOfSwitches = new List<string>();
-	private string csToLoad;
 
 	private int typeIndex = 0;
 
@@ -52,41 +48,20 @@ public class CutSceneEditor : Editor {
     {
         if(GUILayout.Button("Create new Node List Asset"))
         {
-            //TODO : Decide to make everything an asset or not. probably yes, because of prefabs for bundles.
-            //CreateCutSceneAsset();
-            cutScene.nodeListAsset = ScriptableObject.CreateInstance<CutSceneNodeList>();
+            CreateCutSceneAsset();
         }
     }
 
     void CreateCutSceneAsset()
     {
-        string nameTag = "BehaviourNodeList";
         var config = GetCutSceneSystemConfiguration();
         if (config == null)
         {
             Debug.LogError("Could not find an editor config for BehviorNodeSystem.");
             return;
         }
-        int numberedSufix = -1;
-        string folderFinalName;
-        do
-        {
-            numberedSufix++;
-            folderFinalName = config.GetPathToSaveNodeLists() + "/" + nameTag + numberedSufix;
-        } while (AssetDatabase.IsValidFolder("Assets/" + folderFinalName));
-        var lala = config.GetPathToSaveNodeLists()+ "   ,  " + nameTag +numberedSufix;
-        AssetDatabase.CreateFolder("Assets/" + config.GetPathToSaveNodeLists(), nameTag + numberedSufix);
-        var newAsset = ScriptableObject.CreateInstance<CutSceneNodeList>();
-        var assetName = folderFinalName + "/" + nameTag + numberedSufix + ".asset";
-        try
-        {
-            AssetDatabase.CreateAsset(newAsset, "Assets/" + assetName);
-        } catch (Exception e)
-        {
-            Debug.LogError("Could not create NodesList asset at path "+ "Assets/" + assetName);
-            return;
-        }
-        cutScene.nodeListAsset = newAsset;
+        var assetCreator = new BehaviorNodeAssetCreator(config.GetPathToSaveNodeLists());
+        cutScene.nodeListAsset = assetCreator.CreateNodeListAsset();
     }
 
     private String GenerateAssetName(string nametag)
@@ -118,8 +93,8 @@ public class CutSceneEditor : Editor {
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("- Delete", GUILayout.Width(100)))
             {
-                Undo.RecordObject(cutScene.nodeListAsset, "Node deleted");
                 cutScene.nodeListAsset.list.Remove(node);
+                AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(node));
                 break;
             }
             if (GUILayout.Button("[MOVE UP]", GUILayout.Width(100)))
@@ -166,10 +141,16 @@ public class CutSceneEditor : Editor {
 
         if (GUILayout.Button("Add Node", GUILayout.Width(100)))
         {
-            var newNode = Convert.ChangeType(ScriptableObject.CreateInstance(sceneNodeTypesList[typeIndex]), sceneNodeTypesList[typeIndex]);
-            ((CutSceneNode)newNode).cutScene = cutScene;
-            Undo.RecordObject(cutScene.nodeListAsset, "Node added");
-            cutScene.nodeListAsset.list.Add((CutSceneNode)newNode);
+            var config = GetCutSceneSystemConfiguration();
+            if (config == null)
+            {
+                Debug.LogError("Could not find an editor config for BehviorNodeSystem.");
+                return;
+            }
+            var assetCreator = new BehaviorNodeAssetCreator(config.GetPathToSaveNodeLists());
+            var newNode = assetCreator.CreateNodeAsset(cutScene.nodeListAsset, sceneNodeTypesList[typeIndex]);
+            newNode.cutScene = cutScene;
+            cutScene.nodeListAsset.list.Add(newNode);
         }
         GUILayout.EndHorizontal();
     }
@@ -240,7 +221,6 @@ public class CutSceneEditor : Editor {
 
     private void OnUndo()
     {
-        Debug.Log("hu3");
         Repaint();
     }
 }
