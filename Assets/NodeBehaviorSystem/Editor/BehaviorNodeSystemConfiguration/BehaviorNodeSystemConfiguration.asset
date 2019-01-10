@@ -8,7 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd7b8c511c4d34367a585c411d564a37, type: 3}
-  m_Name: CutScene2
+  m_Script: {fileID: 11500000, guid: 74b855c16884eeb49bcd9912835f4905, type: 3}
+  m_Name: BehaviorNodeSystemConfiguration
   m_EditorClassIdentifier: 
-  nodeList: []
+  _pathToSaveNodeLists: NodeBehaviorSystem/NodeLists

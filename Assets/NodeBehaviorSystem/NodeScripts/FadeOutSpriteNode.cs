@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEditor;
 #endif
 
-public class FadeOutSpriteNode : CutSceneNodes {
+public class FadeOutSpriteNode : CutSceneNode {
 
 	public SpriteRenderer spriteRenderer = null;
 	public float finalAlpha = 0;
@@ -32,7 +32,7 @@ public class FadeOutSpriteNode : CutSceneNodes {
 	public override  void update(){
 
 		if (spriteRenderer.color.a <= 0) {
-			hasExecutionEnded = true;
+			EndNodeExecution();
 		} else {
 			spriteRenderer.color = new Color(spriteRenderer.color.r,spriteRenderer.color.g,spriteRenderer.color.b, spriteRenderer.color.a - speed * Time.deltaTime);
 		}

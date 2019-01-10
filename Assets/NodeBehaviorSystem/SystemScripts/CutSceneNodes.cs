@@ -5,9 +5,9 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public class CutSceneNodes : ScriptableObject{
+public class CutSceneNode : ScriptableObject{
 
-	public bool hasExecutionEnded = false;
+	private bool _hasExecutionEnded = false;
 	[SerializeField]
 	public CutScene cutScene;
 
@@ -35,9 +35,18 @@ public class CutSceneNodes : ScriptableObject{
 
 	//executed each time the chatbox of the cutscene system is taped/clicked
 	virtual public void tapAtScreen(){
-		hasExecutionEnded = true;
+		EndNodeExecution();
 	}
 
+    public void EndNodeExecution()
+    {
+        EndNodeExecution();
+    }
+
+    public bool HasExecutionEnded()
+    {
+        return _hasExecutionEnded;
+    }
 }
 
 

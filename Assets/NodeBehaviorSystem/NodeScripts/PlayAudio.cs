@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class PlayAudio : CutSceneNodes {
+public class PlayAudio : CutSceneNode {
 	[SerializeField]
 	public GameObject objectSource;
 	public AudioClip audio;
@@ -29,7 +29,7 @@ public class PlayAudio : CutSceneNodes {
 	
 	public override  void update(){
 		if(!audioSource.isPlaying){
-			hasExecutionEnded = true;
+			EndNodeExecution();
 		}
 	}
 	

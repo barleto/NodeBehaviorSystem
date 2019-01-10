@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class ExecuteFunctionNode : CutSceneNodes {
+public class ExecuteFunctionNode : CutSceneNode {
 	[SerializeField]
 	public MonoBehaviour eventCallee = null;
 	[SerializeField]
@@ -24,7 +24,7 @@ public class ExecuteFunctionNode : CutSceneNodes {
 
 	public override void start(){
 		this.eventCallee.Invoke (functionName,0);
-		hasExecutionEnded = true;
+		EndNodeExecution();
 	}
 	
 	public override  void update(){

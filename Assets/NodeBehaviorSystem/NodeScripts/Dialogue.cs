@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 [System.Serializable]
-public class Dialogue : CutSceneNodes {
+public class Dialogue : CutSceneNode {
 	public Sprite characterImage;
 	public string text;
 	[Range(0.1f,5f)]
@@ -40,17 +40,14 @@ public class Dialogue : CutSceneNodes {
 
 	public override void start(){
 		base.start ();
-		cutScene.css.talkImage.sprite = characterImage;
-		textBox = cutScene.css.textBox;
 		textBox.text = "";
 		hasFinishedWritingText = false;
-		cutScene.css.toggleUIVisibility (true);
 		textRoutine = cutScene.StartCoroutine (showText ());
 	}
 	
 	public override  void update(){
 		if(dontWaitForPlayerTap && hasFinishedWritingText){
-			hasExecutionEnded = true;
+			EndNodeExecution();
 		}
 	}
 	
@@ -59,14 +56,13 @@ public class Dialogue : CutSceneNodes {
 		if(textRoutine!=null){
 			cutScene.StopCoroutine (textRoutine);
 		}
-		cutScene.css.toggleUIVisibility (false);
 		hasFinishedWritingText = false;
 	}
 
 	public override void tapAtScreen ()
 	{
 		if(hasFinishedWritingText){
-			hasExecutionEnded = true;
+			EndNodeExecution();
 		} else if(!dontLetPlayerTap){
 			finishShowText();
 		}

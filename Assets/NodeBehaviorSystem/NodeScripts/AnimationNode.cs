@@ -5,7 +5,7 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public class AnimationNode : CutSceneNodes {
+public class AnimationNode : CutSceneNode {
 	public Animation animation = null;
 
 	#if UNITY_EDITOR
@@ -22,7 +22,7 @@ public class AnimationNode : CutSceneNodes {
 	
 	public override  void update(){
 		if(!(animation.isPlaying)){
-			hasExecutionEnded = true;
+			EndNodeExecution();
 		}
 	}
 	

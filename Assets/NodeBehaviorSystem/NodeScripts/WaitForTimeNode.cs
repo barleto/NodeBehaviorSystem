@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class WaitForTimeNode : CutSceneNodes {
+public class WaitForTimeNode : CutSceneNode {
 	[SerializeField]
 	public float timeToWait = 1;
 	private float timePassed;
@@ -25,7 +25,7 @@ public class WaitForTimeNode : CutSceneNodes {
 	public override  void update(){
 		timePassed += Time.deltaTime;
 		if(timePassed >= timeToWait){
-			hasExecutionEnded = true;
+			EndNodeExecution();
 		}
 	}
 	

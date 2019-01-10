@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class SetSwitchValueNode : CutSceneNodes {
+public class SetSwitchValueNode : CutSceneNode {
 
 	[SerializeField]
 	public enum SwitchState{On,Off};
@@ -32,14 +32,14 @@ public class SetSwitchValueNode : CutSceneNodes {
 		EditorGUILayout.BeginHorizontal ();
 		GUILayout.Label ("Set ");
 		switchNames.Clear ();
-		foreach(GameSwitch gameSwitch in cutScene.css.SwitchVariables){
+		foreach(GameSwitch gameSwitch in cutScene.cutSceneSystem.switchVariables){
 			switchNames.Add(gameSwitch.name);
 		}
 
 
 		selectedIndex = (int)EditorGUILayout.Popup (selectedIndex, switchNames.ToArray());
-		if (cutScene.css.SwitchVariables.Count > 0) {
-			targetSwitch = cutScene.css.SwitchVariables[selectedIndex];
+		if (cutScene.cutSceneSystem.switchVariables.Count > 0) {
+			targetSwitch = cutScene.cutSceneSystem.switchVariables[selectedIndex];
 		}
 
 		GUILayout.Label (" to ");
@@ -58,7 +58,7 @@ public class SetSwitchValueNode : CutSceneNodes {
 				targetSwitch.value = false;
 			}
 		}
-		hasExecutionEnded = true;
+		EndNodeExecution();
 	}
 	
 	public override  void update(){

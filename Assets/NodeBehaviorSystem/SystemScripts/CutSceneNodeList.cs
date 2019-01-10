@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class CutSceneNodeList : ScriptableObject {
 
 	[SerializeField]
-	public List<CutSceneNodes> nodeList;
+	public List<CutSceneNode> list = new List<CutSceneNode>();
 
 }
 

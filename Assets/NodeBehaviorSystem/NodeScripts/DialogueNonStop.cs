@@ -7,7 +7,7 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public class DialogueNonStop : CutSceneNodes {
+public class DialogueNonStop : CutSceneNode {
 	public string text;
 	public float timeToLive = 1.0f;
 	[Range(0.1f,5f)]
@@ -57,7 +57,7 @@ public class DialogueNonStop : CutSceneNodes {
 	public override  void update(){
 		countTime += Time.deltaTime;
 		if(countTime >= timeToLive){
-			hasExecutionEnded = true;
+            EndNodeExecution();
 		}
 	}
 	

@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class DecisionSwitchNode : CutSceneNodes {
+public class DecisionSwitchNode : CutSceneNode {
 
 	[SerializeField]
 	public enum SwitchState{On,Off};
@@ -34,14 +34,14 @@ public class DecisionSwitchNode : CutSceneNodes {
 		//switch system here:
 		listOfSwitches.Clear ();
 		listOfSwitches.Add ("None");
-		foreach(GameSwitch gameSwitch in cutScene.css.SwitchVariables){
+		foreach(GameSwitch gameSwitch in cutScene.cutSceneSystem.switchVariables){
 			listOfSwitches.Add(gameSwitch.name);
 		}
 
 		indexOfSwitch = EditorGUILayout.Popup ("Switch to check: ",indexOfSwitch,listOfSwitches.ToArray());
 
-		if (cutScene.css.SwitchVariables.Count > 0 && (indexOfSwitch -1) >= 0) {
-			decisionSwitch = cutScene.css.SwitchVariables [indexOfSwitch - 1];
+		if (cutScene.cutSceneSystem.switchVariables.Count > 0 && (indexOfSwitch -1) >= 0) {
+			decisionSwitch = cutScene.cutSceneSystem.switchVariables [indexOfSwitch - 1];
 		} else {
 			decisionSwitch = null;
 		}
@@ -57,22 +57,22 @@ public class DecisionSwitchNode : CutSceneNodes {
 #endif
 
 	public override void start(){
-		hasExecutionEnded = true;
+		EndNodeExecution();
 		if (cutSceneToGo != null) {
 			if(decisionSwitch.value == true){
-				cutScene.css.playScene(cutSceneToGo);
+				cutScene.cutSceneSystem.PlayScene(cutSceneToGo);
 			}
 		} else {
 			if(decisionSwitch.value == false){
-				cutScene.css.stopScene();
+				cutScene.cutSceneSystem.StopScene();
 			}
 		}
 	}
 	
-	public override  void update(){
+	public override void update(){
 	}
 	
-	public override  void end(){
+	public override void end(){
 
 	}
 

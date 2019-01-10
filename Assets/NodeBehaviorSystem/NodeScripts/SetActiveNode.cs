@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class SetActiveNode : CutSceneNodes {
+public class SetActiveNode : CutSceneNode {
 	[SerializeField]
 	public GameObject gameObj;
 	public bool active = false;
@@ -25,7 +25,7 @@ public class SetActiveNode : CutSceneNodes {
 
 	public override void start(){
 		gameObj.SetActive (active);
-		hasExecutionEnded = true;
+		EndNodeExecution();
 	}
 	
 	public override  void update(){
