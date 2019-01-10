@@ -11,6 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74b855c16884eeb49bcd9912835f4905, type: 3}
   m_Name: BehaviorNodeSystemConfiguration
   m_EditorClassIdentifier: 
-  _pathToSaveNodeLists: Assets/NodeBehaviorSystem/NodeLists
+  _pathToSaveNodeLists: Assets/BehaviorNodeSystem/NodeLists
   _behaviorSystemPrefab: {fileID: 1000013478436424, guid: a1c3918d60f324bf79829c422f31e295,
     type: 2}
