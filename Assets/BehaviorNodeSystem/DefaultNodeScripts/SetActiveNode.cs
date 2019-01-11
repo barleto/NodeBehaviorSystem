@@ -16,14 +16,12 @@ namespace BehaviorNodePlugin
         public bool active = false;
 
 #if UNITY_EDITOR
-        public override void createUIDescription(BehaviorListHolder BehaviorList, SerializedObject serializedObject)
+        public override void createUIDescription(BehaviorListHolder behaviorList, SerializedObject serializedObject)
         {
             SetActiveNode node = this;
             GUILayout.Label("<<SetActiveNode>>");
             gameObj = (GameObject)EditorGUILayout.ObjectField("Object: ", gameObj, typeof(GameObject), true);
             active = EditorGUILayout.Toggle("Active: ", active);
-
-
         }
 #endif
 
@@ -33,16 +31,9 @@ namespace BehaviorNodePlugin
             EndNodeExecution();
         }
 
-        public override void OnUpdate()
+        public override bool HasCustomInspector()
         {
-
+            return true;
         }
-
-        public override void OnEnd()
-        {
-
-        }
-
-
     }
 }

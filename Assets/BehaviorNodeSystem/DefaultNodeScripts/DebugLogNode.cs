@@ -21,20 +21,15 @@ namespace BehaviorNodePlugin
         }
 #endif
 
-        public override void OnStart()
-        {
-
-        }
-
         public override void OnUpdate()
         {
             Debug.Log(text);
             EndNodeExecution();
         }
 
-        public override void OnEnd()
+        public override bool HasCustomInspector()
         {
-
+            return true;
         }
     }
 }

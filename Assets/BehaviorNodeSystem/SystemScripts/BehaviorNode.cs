@@ -55,7 +55,7 @@ namespace BehaviorNodePlugin
         }
 
         public virtual bool HasCustomInspector(){
-            return true;
+            return false;
         }
     }
 }

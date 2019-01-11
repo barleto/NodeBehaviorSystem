@@ -15,7 +15,7 @@ namespace BehaviorNodePlugin
         public float timeToWait = 1;
         private float timePassed;
 #if UNITY_EDITOR
-        public override void createUIDescription(BehaviorListHolder BehaviorList, SerializedObject serializedObject)
+        public override void createUIDescription(BehaviorListHolder behaviorList, SerializedObject serializedObject)
         {
             GUILayout.Label("<<Time to wait>>");
             timeToWait = EditorGUILayout.FloatField("Time to wait: ", timeToWait);
@@ -36,11 +36,9 @@ namespace BehaviorNodePlugin
             }
         }
 
-        public override void OnEnd()
+        public override bool HasCustomInspector()
         {
-
+            return true;
         }
-
-
     }
 }
