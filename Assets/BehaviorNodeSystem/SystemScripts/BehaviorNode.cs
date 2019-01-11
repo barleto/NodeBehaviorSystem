@@ -11,7 +11,7 @@ namespace BehaviorNodePlugin
     {
 
         private bool _hasExecutionEnded = false;
-        [SerializeField]
+        [HideInInspector]
         public BehaviorListHolder behaviourList;
 
 #if UNITY_EDITOR
@@ -52,6 +52,10 @@ namespace BehaviorNodePlugin
         public bool HasExecutionEnded()
         {
             return _hasExecutionEnded;
+        }
+
+        public virtual bool HasCustomInspector(){
+            return true;
         }
     }
 }

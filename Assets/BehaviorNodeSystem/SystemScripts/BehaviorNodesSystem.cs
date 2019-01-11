@@ -27,24 +27,25 @@ namespace BehaviorNodePlugin
         {
             if (startPlaying && initialBehaviorList != null)
             {
-                PlayScene(initialBehaviorList);
+                PlayList(initialBehaviorList);
             }
         }
 
-        public void PlayScene(BehaviorListHolder newScene)
+        public void PlayList(BehaviorListHolder newBehaviorListHolder)
         {
             EndCurrentBehaviorList();
-            _currentBehaviorList = newScene;
+            _currentBehaviorList = newBehaviorListHolder;
             onBehaviorListStart.Invoke();
+            newBehaviorListHolder.behaviorNodeSystem = this;
             _playingBehaviorNodesCoroutine = StartCoroutine(PlayBehaviorNodesCoroutine());
         }
 
-        public void StopScene()
+        public void Stop()
         {
             EndCurrentBehaviorList();
         }
 
-        public IEnumerator PlayBehaviorNodesCoroutine()
+        private IEnumerator PlayBehaviorNodesCoroutine()
         {
             foreach (BehaviorNode node in _currentBehaviorList.nodeListAsset.list)
             {

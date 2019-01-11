@@ -28,7 +28,7 @@ namespace BehaviorNodePlugin
 
             TryRegisterUndoCallback();
 
-            DrawProperties();
+            DrawDefaultInspector();
 
             if (behaviorList.nodeListAsset == null)
             {
@@ -44,7 +44,6 @@ namespace BehaviorNodePlugin
             {
                 serializedObject.ApplyModifiedProperties();
             }
-
         }
 
         private void DrawCreateNodeListAssetButton()
@@ -72,17 +71,6 @@ namespace BehaviorNodePlugin
             throw new NotImplementedException();
         }
 
-        private void DrawProperties()
-        {
-            //BehaviorListSystem
-            if (behaviorList.behaviorNodeSystem == null)
-            {
-                behaviorList.behaviorNodeSystem = GameObject.Find(GetBehaviorNodeSystemConfiguration().GetSystemPrefab().name).GetComponent<BehaviorNodesSystem>();
-            }
-            behaviorList.behaviorNodeSystem = (BehaviorNodesSystem)EditorGUILayout.ObjectField("Cut Scene System", behaviorList.behaviorNodeSystem, typeof(BehaviorNodesSystem), true);
-            behaviorList.nodeListAsset = (BehaviorNodesList)EditorGUILayout.ObjectField("Cut Scene Asset:", behaviorList.nodeListAsset, typeof(BehaviorNodesList), true);
-        }
-
 
         private void DrawNodesList()
         {
@@ -94,13 +82,13 @@ namespace BehaviorNodePlugin
                 GUILayout.BeginVertical("box");
 
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("- Delete", GUILayout.Width(100)))
+                if (GUILayout.Button("×", GUILayout.Width(30)))
                 {
                     behaviorList.nodeListAsset.list.Remove(node);
                     AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(node));
                     break;
                 }
-                if (GUILayout.Button("[MOVE UP]", GUILayout.Width(100)))
+                if (GUILayout.Button("▲", GUILayout.Width(30)))
                 {
                     if (i == 0)
                     {
@@ -111,7 +99,7 @@ namespace BehaviorNodePlugin
                     behaviorList.nodeListAsset.list.Insert(i - 1, node);
                     break;
                 }
-                if (GUILayout.Button("[MOVE DOWN]", GUILayout.Width(100)))
+                if (GUILayout.Button("▼", GUILayout.Width(30)))
                 {
                     if (i == behaviorList.nodeListAsset.list.Count() - 1)
                     {
@@ -122,11 +110,32 @@ namespace BehaviorNodePlugin
                     behaviorList.nodeListAsset.list.Insert(i + 1, node);
                     break;
                 }
+                if (GUILayout.Button(new GUIContent("T", "Send node to bottom"), GUILayout.Width(30)))
+                {
+                    Undo.RecordObject(behaviorList.nodeListAsset, "Node moved top");
+                    behaviorList.nodeListAsset.list.RemoveAt(i);
+                    behaviorList.nodeListAsset.list.Insert(0, node);
+                    break;
+                }
+                if (GUILayout.Button(new GUIContent("B", "Send node to bottom"), GUILayout.Width(30)))
+                {
+                    Undo.RecordObject(behaviorList.nodeListAsset, "Node moved bottom");
+                    behaviorList.nodeListAsset.list.RemoveAt(i);
+                    behaviorList.nodeListAsset.list.Insert(behaviorList.nodeListAsset.list.Count(), node);
+                    break;
+                }
                 GUILayout.EndHorizontal();
 
                 Undo.RecordObject(node, "Node properties changed.");
                 EditorGUI.BeginChangeCheck();
-                node.createUIDescription(behaviorList, serializedObject);
+                if (node.HasCustomInspector())
+                {
+                    node.createUIDescription(behaviorList, serializedObject);
+                }
+                else
+                {
+                    Editor.CreateEditor(node).OnInspectorGUI();
+                }
                 if (EditorGUI.EndChangeCheck())
                 {
                     EditorUtility.SetDirty(node);
@@ -174,23 +183,17 @@ namespace BehaviorNodePlugin
 
         const string pluginName = "Plugins/BehaviourNodes";
 
-        [MenuItem(pluginName + "/Add BehaviourList Component to gameObject")]
-        static void AddBehaviorListComponentToGameObject()
+        [MenuItem(pluginName + "/Create new BehaviorNodeList Asset")]
+        static void CreateNewBehaviorListAsset()
         {
-            GameObject obj = (GameObject)Selection.activeGameObject;
-            if (obj != null)
+            var config = GetBehaviorNodeSystemConfiguration();
+            if (config == null)
             {
-                Undo.AddComponent(obj, typeof(BehaviorListHolder));
+                Debug.LogError("Could not find an editor config for BehviorNodeSystem.");
+                return;
             }
-        }
-
-        // Validate the menu item defined by the function above.
-        // The menu item will be disabled if this function returns false.
-        [MenuItem(pluginName + "/Add BehaviourList Component to gameObject", true)]
-        static bool ValidateAddBehaviorListComponentToGameObject()
-        {
-            // Return false if no transform is selected.
-            return (Selection.activeGameObject != null);
+            var assetCreator = new BehaviorNodeAssetCreator(config.GetPathToSaveNodeLists());
+            EditorGUIUtility.PingObject(assetCreator.CreateNodeListAsset());
         }
 
         [MenuItem(pluginName + "/Add NodeBehavior System To Scene")]
