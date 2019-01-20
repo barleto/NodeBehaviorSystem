@@ -64,21 +64,31 @@ public class VisualNodeAssetHelper {
 
     public void DeleteNodesRecursive(VisualNodeBase node, VisualNodeRoot root)
     {
+        if (node == root.root)
+        {
+            root.root = null;
+        }
+
         //enter on children
         var childCount = node.children.Count();
         for (int i = childCount-1; i >= 0; i--)
         {
             if (node.children[i] != null) {
                 node.children[i].parent = null;
+                //DeleteNodesRecursive(node.children[i], root);
             }
         }
         //remove from parent
         if (node.parent != null)
         {
-            node.parent.children.RemoveAll((o)=>node == o);
+            var index = node.parent.children.IndexOf(node);
+            node.parent.children.RemoveAt(index);
+            node.parent.children.Insert(index, null);
         }
 
         root.nodes.Remove(node);
+        EditorUtility.SetDirty(root);
+        AssetDatabase.SaveAssets();
 
         //delete asset
         var path = AssetDatabase.GetAssetPath(node);

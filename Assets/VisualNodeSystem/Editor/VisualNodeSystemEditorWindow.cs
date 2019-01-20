@@ -7,10 +7,15 @@ using UnityEngine;
 
 public class VisualNodeSystemEditorWindow : EditorWindow {
 
-    static VisualNodeRoot _currentRoot;
+    VisualNodeRoot _currentRoot;
     Rect Windows;
     private int _nodeIndex;
     Dictionary<int, VisualNodeBase> _nodeWindowDictionary = new Dictionary<int, VisualNodeBase>();
+
+    private bool _isConnecting;
+    private VisualNodeBase _parentlessNode;
+    Vector2 scrollPos;
+    Rect fullEditorSize = Rect.zero;
 
     [MenuItem("Window/VisualNodeSystem")]
     static void ShowWindow()
@@ -28,67 +33,173 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         Repaint();
     }
 
-    void AddNode(object o)
-    {
-
-    }
-
     void AddNodeToRoot(object o)
     {
         var nodeType = (Type)o;
-        var node = new VisualNodeAssetHelper().CreateNodeAsset(_currentRoot,nodeType);
-        node.windowPosition = new Rect(0,32,150,0);
+        var node = new VisualNodeAssetHelper().CreateNodeAsset(_currentRoot, nodeType);
+        node.windowPosition = new Rect(0, 19, 150, 0);
         node.parent = null;
-        _currentRoot.nodes.Clear();
         _currentRoot.root = node;
         _currentRoot.nodes.Add(node);
+        SaveRootAsset();
+    }
+
+    private void SaveRootAsset()
+    {
+        EditorUtility.SetDirty(_currentRoot);
+        AssetDatabase.SaveAssets();
+    }
+
+    private void SetNodeForSaving(VisualNodeBase node)
+    {
+        EditorUtility.SetDirty(node);
     }
 
     private void OnGUI()
     {
+
         if (_currentRoot == null)
         {
             GUILayout.Label("There is no VisualNodeRoot selected.");
             return;
         }
-        
-        GUI.Box(new Rect(0,0,100,32),"ROOT");
-        if (_currentRoot.root == null) {
-            if (GUI.Button(new Rect(0, 16, 100, 16), "Add root node"))
+
+        GUI.Box(new Rect(0, 0, position.width, 20), _currentRoot.name);
+        if (_currentRoot.root == null)
+        {
+            if (GUI.Button(new Rect(0, 20, 100, 16), "Add root node"))
             {
                 new VisualNodeEditorContextMenu(AddNodeToRoot).ShowMenu();
             }
             return;
         }
-        //lala
-        GUI.BeginScrollView(new Rect(0, 0, position.width, position.height), Vector2.zero, new Rect(0, 0, 2*position.width, 2*position.height));
+
+        //Begin scroll view
+        scrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height), scrollPos, fullEditorSize);
+        fullEditorSize.xMax = 0;
+        fullEditorSize.yMax = 0;
+
+        //Draw node connections
+        for (int i = 0; i < _currentRoot.nodes.Count(); i++)
+        {
+            var node = _currentRoot.nodes[i];
+            if (node == null){
+                continue;
+            };
+            if (node.parent != null)
+            {
+                var parent = node.parent;
+                var nodeAsChildPos = parent.children.IndexOf(node);
+                var heightSector = parent.windowPosition.height / parent.ChildMax();
+                var curveRect = new Rect(
+                    parent.windowPosition.xMax,
+                    parent.windowPosition.y + heightSector * (nodeAsChildPos + 1) - heightSector / 2,
+                    0,
+                    0);
+                DrawNodeCurve(curveRect, node.windowPosition);
+            }
+        }
+        //draw node windows
         _nodeIndex = 0;
         BeginWindows();
         for (int i = 0; i < _currentRoot.nodes.Count(); i++)
         {
-            DrawNodeDecorations(_currentRoot.nodes[i]);
+            var node = _currentRoot.nodes[i];
+            DrawNodeDecorations(node);
+            if (node.parent == null && _currentRoot.root != node && !_isConnecting)
+            {
+                if (GUI.Button(new Rect(node.windowPosition.x - 18, node.windowPosition.center.y - 10, 20, 20), "P"))
+                {
+                    _isConnecting = true;
+                    _parentlessNode = node;
+                }
+            }
+            if (node.parent != null)
+            {
+                if (GUI.Button(new Rect(node.windowPosition.x - 18, node.windowPosition.center.y - 10, 20, 16), "×"))
+                {
+                    var index = node.parent.children.IndexOf(node);
+                    node.parent.children.RemoveAt(index);
+                    node.parent.children.Insert(index, null);
+                    node.parent = null;
+                }
+            }
+
+            fullEditorSize.xMax = Mathf.Max(fullEditorSize.xMax, node.windowPosition.xMax);
+            fullEditorSize.yMax = Mathf.Max(fullEditorSize.yMax, node.windowPosition.yMax);
         }
-        
         EndWindows();
+
         GUI.EndScrollView();
+
+        ConnectingToParentEventCheck();
+
+        if (Event.current.type == EventType.ContextClick)
+        {
+            var mousePos = Event.current.mousePosition;
+            new VisualNodeEditorContextMenu((nodeType) =>
+            {
+                var newNode = new VisualNodeAssetHelper().CreateNodeAsset(_currentRoot, nodeType);
+                newNode.windowPosition = new Rect(mousePos.x, mousePos.y, 150, 0);
+                newNode.parent = null;
+                _currentRoot.nodes.Add(newNode);
+                SaveRootAsset();
+            }).ShowMenu();
+        }
+    }
+
+    private void ConnectingToParentEventCheck()
+    {
+        if (_isConnecting)
+        {
+            if (Event.current.keyCode == KeyCode.Escape)
+            {
+                _isConnecting = false;
+            }
+            DrawNodeCurve(new Rect(Event.current.mousePosition, Vector2.zero), _parentlessNode.windowPosition);
+            Repaint();
+            foreach (var node in _currentRoot.nodes)
+            {
+                if (node != _parentlessNode && node.windowPosition.Overlaps(new Rect(Event.current.mousePosition, Vector2.zero)))
+                {
+                    _isConnecting = false;
+                    if (node.children.Count() < node.ChildMax())
+                    {
+                        _parentlessNode.parent = node;
+                    }
+                    _parentlessNode.parent = node;
+                    var heightSector = node.windowPosition.height / node.ChildMax();
+                    var childIndex = Mathf.CeilToInt((Event.current.mousePosition.y - node.windowPosition.y) / heightSector) - 1;
+                    if (node.children.Count() > childIndex && node.children[childIndex] != null)
+                    {
+                        node.children[childIndex].parent = null;
+                    }
+                    node.children.RemoveAt(childIndex);
+                    node.children.Insert(childIndex, _parentlessNode);
+                    SetNodeForSaving(node);
+                    SetNodeForSaving(_parentlessNode);
+                }
+            }
+        }
     }
 
     void DrawNodeDecorations(VisualNodeBase node)
     {
         _nodeIndex++;
         _nodeWindowDictionary[_nodeIndex] = node;
-        node.windowPosition = GUILayout.Window(_nodeIndex, node.windowPosition, DrawNodeWindow, node.GetType().Name);
+        var newPos = GUILayout.Window(_nodeIndex, node.windowPosition, DrawNodeWindow, node.GetType().Name);
+        if (newPos != node.windowPosition)
+        {
+            EditorUtility.SetDirty(node);
+        }
+        node.windowPosition = newPos;
         node.windowPosition.x = Mathf.Clamp(node.windowPosition.x, 0f, node.windowPosition.x);
-        node.windowPosition.y = Mathf.Clamp(node.windowPosition.y, 32f, node.windowPosition.y);
+        node.windowPosition.y = Mathf.Clamp(node.windowPosition.y, 19f, node.windowPosition.y);
         node.VerifyChildrenVectorSize();
         for (int i = 0; i < node.ChildMax(); i++)
         {
             if (node.children[i] == null) {
-                DrawPlusButtonOnNode(node, i);
-            }
-            else
-            {
-                DrawNodeCurve(node.windowPosition, node.children[i].windowPosition);
+                DrawPlusButtonsOnNode(node, i);
             }
         }
     }
@@ -111,7 +222,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.black, null, 1);
     }
 
-    private static void DrawPlusButtonOnNode(VisualNodeBase node, int i)
+    private void DrawPlusButtonsOnNode(VisualNodeBase node, int i)
     {
         var childIndex = i;
         var butLabel = node.ChildrenLabels()[i];
@@ -131,6 +242,9 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
                 node.children.RemoveAt(childIndex);
                 node.children.Insert(childIndex, newNode);
                 _currentRoot.nodes.Add(newNode);
+                SaveRootAsset();
+                SetNodeForSaving(node);
+                SetNodeForSaving(newNode);
             }).ShowMenu();
         }
     }

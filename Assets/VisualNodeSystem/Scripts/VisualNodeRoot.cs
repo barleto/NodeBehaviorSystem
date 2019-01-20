@@ -5,6 +5,6 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class VisualNodeRoot : ScriptableObject {
     public VisualNodeBase root;
-    [HideInInspector]
+    [SerializeField]
     public List<VisualNodeBase> nodes = new List<VisualNodeBase>();
 }

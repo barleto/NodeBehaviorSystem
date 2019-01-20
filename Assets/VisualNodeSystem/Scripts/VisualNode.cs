@@ -5,6 +5,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class VisualNodeBase : ScriptableObject{
+    [SerializeField]
     [HideInInspector]
     public List<VisualNodeBase> children = new List<VisualNodeBase>();
     [HideInInspector]
@@ -31,31 +32,4 @@ public class VisualNodeBase : ScriptableObject{
             children.Add(null);
         }
     }
-}
-
-[System.Serializable]
-public class ANode : VisualNodeBase
-{
-    public int lala;
-}
-
-[System.Serializable]
-public class BNode : VisualNodeBase
-{
-    public int lblb;
-    public int c;
-    public int d;
-    public int e;
-
-    public override int ChildMax()
-    {
-        return 2;
-    }
-
-#if UNITY_EDITOR
-    public override string[] ChildrenLabels()
-    {
-        return new string[] { "F", "T" };
-    }
-#endif
 }

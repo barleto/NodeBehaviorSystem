@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Node1
   m_EditorClassIdentifier: 
   behaviourList: {fileID: 0}
-  lala1: 0
+  lala1: 168
   lala2: 0
   lala3: 0
   lala4: 0
