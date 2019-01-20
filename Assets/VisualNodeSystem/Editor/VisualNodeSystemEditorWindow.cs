@@ -152,7 +152,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             _isDragging = true;
             Event.current.Use();
         }
-        else if (Event.current.type == EventType.MouseUp || Event.current.type == EventType.MouseLeaveWindow)
+        else if ((Event.current.type == EventType.MouseUp || Event.current.type == EventType.MouseLeaveWindow))
         {
             _isDragging = false;
         }

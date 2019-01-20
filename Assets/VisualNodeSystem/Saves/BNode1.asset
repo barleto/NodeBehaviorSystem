@@ -9,16 +9,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7b42f47fd07dca489604007c514d56f, type: 3}
-  m_Name: BNode0
+  m_Name: BNode1
   m_EditorClassIdentifier: 
   children:
-  - {fileID: 11400000, guid: ced107d011d541a4c817fa66ef5cd4d8, type: 2}
-  - {fileID: 11400000, guid: 9a71341cf3277e742a830f1ecf710be9, type: 2}
-  parent: {fileID: 11400000, guid: d5606260ec3b3204b869113c025b1c1b, type: 2}
+  - {fileID: 11400000, guid: d630479973822f440ab8fbd672df3c5f, type: 2}
+  - {fileID: 11400000, guid: f412903992768134a8c437ebe809dc07, type: 2}
+  parent: {fileID: 11400000, guid: b368632c568c8a349acc7b40e28aa7b8, type: 2}
   windowPosition:
     serializedVersion: 2
-    x: 287
-    y: 0
+    x: 534
+    y: 87
     width: 215
     height: 113
   lblb: 0
