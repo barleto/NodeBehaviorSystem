@@ -16,6 +16,8 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
     private VisualNodeBase _parentlessNode;
     Vector2 scrollPos;
     Rect fullEditorSize = Rect.zero;
+    private bool _isDragging;
+    Vector2 lastMousePos;
 
     [MenuItem("Window/VisualNodeSystem")]
     static void ShowWindow()
@@ -37,7 +39,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
     {
         var nodeType = (Type)o;
         var node = new VisualNodeAssetHelper().CreateNodeAsset(_currentRoot, nodeType);
-        node.windowPosition = new Rect(0, 19, 150, 0);
+        node.windowPosition = new Rect(0, 0, 150, 0);
         node.parent = null;
         _currentRoot.root = node;
         _currentRoot.nodes.Add(node);
@@ -75,7 +77,9 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         }
 
         //Begin scroll view
-        scrollPos = GUI.BeginScrollView(new Rect(0, 0, position.width, position.height), scrollPos, fullEditorSize);
+        fullEditorSize.width += 100f;
+        fullEditorSize.height += 100f;
+        scrollPos = GUI.BeginScrollView(new Rect(0, 20, position.width, position.height - 20), scrollPos, fullEditorSize);
         fullEditorSize.xMax = 0;
         fullEditorSize.yMax = 0;
 
@@ -83,7 +87,8 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         for (int i = 0; i < _currentRoot.nodes.Count(); i++)
         {
             var node = _currentRoot.nodes[i];
-            if (node == null){
+            if (node == null)
+            {
                 continue;
             };
             if (node.parent != null)
@@ -134,12 +139,45 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
 
         ConnectingToParentEventCheck();
 
+        HandleContextClick();
+
+        HandleScrollDrag();
+    }
+
+    private void HandleScrollDrag()
+    {
+        if (Event.current.type == EventType.MouseDown)
+        {
+            lastMousePos = Event.current.mousePosition;
+            _isDragging = true;
+            Event.current.Use();
+        }
+        else if (Event.current.type == EventType.MouseUp || Event.current.type == EventType.MouseLeaveWindow)
+        {
+            _isDragging = false;
+        }
+
+        if (_isDragging)
+        {
+            var movement = Event.current.mousePosition - lastMousePos;
+            movement = -movement;
+            lastMousePos = Event.current.mousePosition;
+            scrollPos += movement;
+            Repaint();
+            scrollPos.x = Mathf.Clamp(scrollPos.x, 0, scrollPos.x);
+            scrollPos.y = Mathf.Clamp(scrollPos.y, 0, scrollPos.y);
+        }
+    }
+
+    private void HandleContextClick()
+    {
         if (Event.current.type == EventType.ContextClick)
         {
             var mousePos = Event.current.mousePosition;
             new VisualNodeEditorContextMenu((nodeType) =>
             {
                 var newNode = new VisualNodeAssetHelper().CreateNodeAsset(_currentRoot, nodeType);
+                mousePos += scrollPos;
                 newNode.windowPosition = new Rect(mousePos.x, mousePos.y, 150, 0);
                 newNode.parent = null;
                 _currentRoot.nodes.Add(newNode);
@@ -156,11 +194,13 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             {
                 _isConnecting = false;
             }
-            DrawNodeCurve(new Rect(Event.current.mousePosition, Vector2.zero), _parentlessNode.windowPosition);
+            DrawNodeCurve(new Rect(Event.current.mousePosition, Vector2.zero), FixRectWithScroll(_parentlessNode.windowPosition));
             Repaint();
             foreach (var node in _currentRoot.nodes)
             {
-                if (node != _parentlessNode && node.windowPosition.Overlaps(new Rect(Event.current.mousePosition, Vector2.zero)))
+                Rect nodeWindowPosition = FixRectWithScroll(node.windowPosition);
+                nodeWindowPosition.y += 20;
+                if (node != _parentlessNode && nodeWindowPosition.Contains(Event.current.mousePosition))
                 {
                     _isConnecting = false;
                     if (node.children.Count() < node.ChildMax())
@@ -169,7 +209,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
                     }
                     _parentlessNode.parent = node;
                     var heightSector = node.windowPosition.height / node.ChildMax();
-                    var childIndex = Mathf.CeilToInt((Event.current.mousePosition.y - node.windowPosition.y) / heightSector) - 1;
+                    var childIndex = Mathf.CeilToInt((Event.current.mousePosition.y - nodeWindowPosition.y) / heightSector) - 1;
                     if (node.children.Count() > childIndex && node.children[childIndex] != null)
                     {
                         node.children[childIndex].parent = null;
@@ -183,6 +223,17 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         }
     }
 
+    Rect FixRectWithScroll(Rect rect)
+    {
+        return AddVectorToRect(rect, -scrollPos);
+    }
+
+    Rect AddVectorToRect(Rect rect, Vector2 vec2)
+    {
+        rect.position += vec2;
+        return rect;
+    }
+
     void DrawNodeDecorations(VisualNodeBase node)
     {
         _nodeIndex++;
@@ -194,7 +245,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         }
         node.windowPosition = newPos;
         node.windowPosition.x = Mathf.Clamp(node.windowPosition.x, 0f, node.windowPosition.x);
-        node.windowPosition.y = Mathf.Clamp(node.windowPosition.y, 19f, node.windowPosition.y);
+        node.windowPosition.y = Mathf.Clamp(node.windowPosition.y, 0F, node.windowPosition.y);
         node.VerifyChildrenVectorSize();
         for (int i = 0; i < node.ChildMax(); i++)
         {
@@ -206,6 +257,10 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
 
     private void DrawDeleteButton(VisualNodeBase node)
     {
+        if (_isConnecting)
+        {
+            return;
+        }
         if (GUI.Button(new Rect(0, 0, 25,16),"×"))
         {
             new VisualNodeAssetHelper().DeleteNodesRecursive(node, _currentRoot);
@@ -219,7 +274,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         Vector3 startTan = startPos + Vector3.right * 50;
         Vector3 endTan = endPos + Vector3.left * 50;
         Color shadowCol = new Color(0, 0, 0, 0.06f);
-        Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.black, null, 1);
+        Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.gray, null, 2);
     }
 
     private void DrawPlusButtonsOnNode(VisualNodeBase node, int i)
