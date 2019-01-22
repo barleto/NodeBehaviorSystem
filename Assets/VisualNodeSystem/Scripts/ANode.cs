@@ -5,5 +5,5 @@ using UnityEngine;
 [System.Serializable]
 public class ANode : VisualNodeBase
 {
-    public int lala;
+    public int number;
 }

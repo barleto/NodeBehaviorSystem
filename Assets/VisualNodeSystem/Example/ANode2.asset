@@ -9,15 +9,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06333e35a11aa344ea5d97e79102379a, type: 3}
-  m_Name: ANode3
+  m_Name: ANode2
   m_EditorClassIdentifier: 
   children:
   - {fileID: 0}
   parent: {fileID: 11400000, guid: 9a71341cf3277e742a830f1ecf710be9, type: 2}
   windowPosition:
     serializedVersion: 2
-    x: 830
-    y: 189
+    x: 857
+    y: 92
     width: 215
     height: 59
-  lala: 0
+  number: 0

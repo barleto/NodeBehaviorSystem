@@ -5,10 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class BNode : VisualNodeBase
 {
-    public int lblb;
-    public int c;
-    public int d;
-    public int e;
+    public bool flag;
 
     public override int ChildMax()
     {
@@ -16,9 +13,14 @@ public class BNode : VisualNodeBase
     }
 
 #if UNITY_EDITOR
-    public override string[] ChildrenLabels()
+    public override string[] ChildrenLabelsInEditor()
     {
         return new string[] { "F", "T" };
+    }
+
+    public override Color[] LineColor()
+    {
+        return new Color[] { Color.red, Color.green, Color.green };
     }
 #endif
 }

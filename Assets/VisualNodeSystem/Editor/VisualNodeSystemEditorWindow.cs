@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class VisualNodeSystemEditorWindow : EditorWindow {
 
-    VisualNodeRoot _currentRoot;
+    static VisualNodeRoot _currentRoot;
     Rect Windows;
     private int _nodeIndex;
     Dictionary<int, VisualNodeBase> _nodeWindowDictionary = new Dictionary<int, VisualNodeBase>();
@@ -59,6 +59,8 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
 
     private void OnGUI()
     {
+        GUI.Box(new Rect(0, 0, position.width, 20), "");
+        _currentRoot = (VisualNodeRoot)EditorGUILayout.ObjectField(_currentRoot, typeof(VisualNodeRoot));
 
         if (_currentRoot == null)
         {
@@ -66,7 +68,6 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             return;
         }
 
-        GUI.Box(new Rect(0, 0, position.width, 20), _currentRoot.name);
         if (_currentRoot.root == null)
         {
             if (GUI.Button(new Rect(0, 20, 100, 16), "Add root node"))
@@ -101,7 +102,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
                     parent.windowPosition.y + heightSector * (nodeAsChildPos + 1) - heightSector / 2,
                     0,
                     0);
-                DrawNodeCurve(curveRect, node.windowPosition);
+                DrawNodeCurve(curveRect, node.windowPosition, parent.LineColor()[parent.children.IndexOf(node)]);
             }
         }
         //draw node windows
@@ -218,6 +219,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
                     node.children.Insert(childIndex, _parentlessNode);
                     SetNodeForSaving(node);
                     SetNodeForSaving(_parentlessNode);
+                    break;
                 }
             }
         }
@@ -255,6 +257,19 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         }
     }
 
+    [MenuItem("Assets/Open in Visual Node Editor")]
+    public static void OpenInVisualNodeEditor()
+    {
+        ShowWindow();
+        _currentRoot = Selection.activeObject as VisualNodeRoot;
+    }
+
+    [MenuItem("Assets/Open in Visual Node Editor", true)]
+    public static bool ValidateOpenInVisualNodeEditor()
+    {
+        return Selection.activeObject is VisualNodeRoot;
+    }
+
     private void DrawDeleteButton(VisualNodeBase node)
     {
         if (_isConnecting)
@@ -263,7 +278,14 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         }
         if (GUI.Button(new Rect(0, 0, 25,16),"×"))
         {
+            new VisualNodeAssetHelper().DeleteNodes(node, _currentRoot);
+            AssetDatabase.SaveAssets();
+        }
+
+        if (GUI.Button(new Rect(node.windowPosition.width - 25, 0, 25, 16), "×⍆"))
+        {
             new VisualNodeAssetHelper().DeleteNodesRecursive(node, _currentRoot);
+            AssetDatabase.SaveAssets();
         }
     }
 
@@ -277,10 +299,20 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         Handles.DrawBezier(startPos, endPos, startTan, endTan, Color.gray, null, 2);
     }
 
+    void DrawNodeCurve(Rect start, Rect end, Color color)
+    {
+        Vector3 startPos = new Vector3(start.x + start.width, start.y + start.height / 2, 0);
+        Vector3 endPos = new Vector3(end.x, end.y + end.height / 2, 0);
+        Vector3 startTan = startPos + Vector3.right * 50;
+        Vector3 endTan = endPos + Vector3.left * 50;
+        Color shadowCol = new Color(0, 0, 0, 0.06f);
+        Handles.DrawBezier(startPos, endPos, startTan, endTan, color, null, 2);
+    }
+
     private void DrawPlusButtonsOnNode(VisualNodeBase node, int i)
     {
         var childIndex = i;
-        var butLabel = node.ChildrenLabels()[i];
+        var butLabel = node.ChildrenLabelsInEditor()[i];
         float windowFraction = node.windowPosition.height / node.ChildMax();
         var butRect = new Rect(
             node.windowPosition.xMax, 

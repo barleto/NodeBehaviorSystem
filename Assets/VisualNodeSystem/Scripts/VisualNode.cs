@@ -14,7 +14,7 @@ public class VisualNodeBase : ScriptableObject{
     [HideInInspector]
     public Rect windowPosition;
 
-    public virtual string[] ChildrenLabels()
+    public virtual string[] ChildrenLabelsInEditor()
     {
         return new string[] {"+"};
     }
@@ -23,6 +23,11 @@ public class VisualNodeBase : ScriptableObject{
     public virtual int ChildMax()
     {
         return 1;
+    }
+
+    public virtual Color[] LineColor()
+    {
+        return new Color[] { Color.grey}; 
     }
 
     public void VerifyChildrenVectorSize()

@@ -62,7 +62,7 @@ public class VisualNodeAssetHelper {
         return (VisualNodeBase)newNode;
     }
 
-    public void DeleteNodesRecursive(VisualNodeBase node, VisualNodeRoot root)
+    public void DeleteNodes(VisualNodeBase node, VisualNodeRoot root)
     {
         if (node == root.root)
         {
@@ -88,7 +88,39 @@ public class VisualNodeAssetHelper {
 
         root.nodes.Remove(node);
         EditorUtility.SetDirty(root);
-        AssetDatabase.SaveAssets();
+
+        //delete asset
+        var path = AssetDatabase.GetAssetPath(node);
+        AssetDatabase.DeleteAsset(path);
+    }
+
+    public void DeleteNodesRecursive(VisualNodeBase node, VisualNodeRoot root)
+    {
+        if (node == root.root)
+        {
+            root.root = null;
+        }
+
+        //enter on children
+        var childCount = node.children.Count();
+        for (int i = childCount - 1; i >= 0; i--)
+        {
+            if (node.children[i] != null)
+            {
+                node.children[i].parent = null;
+                DeleteNodesRecursive(node.children[i], root);
+            }
+        }
+        //remove from parent
+        if (node.parent != null)
+        {
+            var index = node.parent.children.IndexOf(node);
+            node.parent.children.RemoveAt(index);
+            node.parent.children.Insert(index, null);
+        }
+
+        root.nodes.Remove(node);
+        EditorUtility.SetDirty(root);
 
         //delete asset
         var path = AssetDatabase.GetAssetPath(node);
