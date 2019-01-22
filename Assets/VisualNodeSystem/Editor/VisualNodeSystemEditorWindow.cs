@@ -172,8 +172,9 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
 
     private void HandleContextClick()
     {
-        if (Event.current.type == EventType.ContextClick)
+        if (Event.current.button == 1)
         {
+            Event.current.Use();
             var mousePos = Event.current.mousePosition;
             new VisualNodeEditorContextMenu((nodeType) =>
             {
