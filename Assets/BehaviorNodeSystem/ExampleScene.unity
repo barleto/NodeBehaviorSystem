@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startPlaying: 1
-  initialBehaviorList: {fileID: 0}
+  initialBehaviorList: {fileID: 2036124565}
   _currentBehaviorList: {fileID: 0}
   onBehaviorListStart:
     m_PersistentCalls:

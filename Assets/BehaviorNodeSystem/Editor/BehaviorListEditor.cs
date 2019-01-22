@@ -15,7 +15,7 @@ namespace BehaviorNodePlugin
     public class BehaviorListEditor : Editor
     {
 
-        BehaviorListHolder behaviorList;
+        BehaviorListHolder behaviorListHolder;
         private List<string> listOfSwitches = new List<string>();
 
         private int typeIndex = 0;
@@ -24,13 +24,13 @@ namespace BehaviorNodePlugin
 
         public override void OnInspectorGUI()
         {
-            behaviorList = (BehaviorListHolder)target;
+            behaviorListHolder = (BehaviorListHolder)target;
 
             TryRegisterUndoCallback();
 
             DrawDefaultInspector();
 
-            if (behaviorList.nodeListAsset == null)
+            if (behaviorListHolder.nodeListAsset == null)
             {
                 DrawCreateNodeListAssetButton();
                 return;
@@ -63,7 +63,7 @@ namespace BehaviorNodePlugin
                 return;
             }
             var assetCreator = new BehaviorNodeAssetCreator(config.GetPathToSaveNodeLists());
-            behaviorList.nodeListAsset = assetCreator.CreateNodeListAsset();
+            behaviorListHolder.nodeListAsset = assetCreator.CreateNodeListAsset();
         }
 
         private String GenerateAssetName(string nametag)
@@ -75,17 +75,19 @@ namespace BehaviorNodePlugin
         private void DrawNodesList()
         {
             //show list
+            bool hasListChanged = false;
 
-            for (int i = 0; i < behaviorList.nodeListAsset.list.Count(); i++)
+            for (int i = 0; i < behaviorListHolder.nodeListAsset.list.Count(); i++)
             {
-                var node = behaviorList.nodeListAsset.list[i];
+                var node = behaviorListHolder.nodeListAsset.list[i];
                 GUILayout.BeginVertical("box");
 
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("×", GUILayout.Width(30)))
                 {
-                    behaviorList.nodeListAsset.list.Remove(node);
+                    behaviorListHolder.nodeListAsset.list.Remove(node);
                     AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(node));
+                    hasListChanged = true;
                     break;
                 }
                 if (GUILayout.Button("▲", GUILayout.Width(30)))
@@ -94,34 +96,38 @@ namespace BehaviorNodePlugin
                     {
                         break;
                     }
-                    Undo.RecordObject(behaviorList.nodeListAsset, "Node moved up");
-                    behaviorList.nodeListAsset.list.RemoveAt(i);
-                    behaviorList.nodeListAsset.list.Insert(i - 1, node);
+                    Undo.RecordObject(behaviorListHolder.nodeListAsset, "Node moved up");
+                    behaviorListHolder.nodeListAsset.list.RemoveAt(i);
+                    behaviorListHolder.nodeListAsset.list.Insert(i - 1, node);
+                    hasListChanged = true;
                     break;
                 }
                 if (GUILayout.Button("▼", GUILayout.Width(30)))
                 {
-                    if (i == behaviorList.nodeListAsset.list.Count() - 1)
+                    if (i == behaviorListHolder.nodeListAsset.list.Count() - 1)
                     {
                         break;
                     }
-                    Undo.RecordObject(behaviorList.nodeListAsset, "Node moved down");
-                    behaviorList.nodeListAsset.list.RemoveAt(i);
-                    behaviorList.nodeListAsset.list.Insert(i + 1, node);
+                    Undo.RecordObject(behaviorListHolder.nodeListAsset, "Node moved down");
+                    behaviorListHolder.nodeListAsset.list.RemoveAt(i);
+                    behaviorListHolder.nodeListAsset.list.Insert(i + 1, node);
+                    hasListChanged = true;
                     break;
                 }
                 if (GUILayout.Button(new GUIContent("T", "Send node to bottom"), GUILayout.Width(30)))
                 {
-                    Undo.RecordObject(behaviorList.nodeListAsset, "Node moved top");
-                    behaviorList.nodeListAsset.list.RemoveAt(i);
-                    behaviorList.nodeListAsset.list.Insert(0, node);
+                    Undo.RecordObject(behaviorListHolder.nodeListAsset, "Node moved top");
+                    behaviorListHolder.nodeListAsset.list.RemoveAt(i);
+                    behaviorListHolder.nodeListAsset.list.Insert(0, node);
+                    hasListChanged = true;
                     break;
                 }
                 if (GUILayout.Button(new GUIContent("B", "Send node to bottom"), GUILayout.Width(30)))
                 {
-                    Undo.RecordObject(behaviorList.nodeListAsset, "Node moved bottom");
-                    behaviorList.nodeListAsset.list.RemoveAt(i);
-                    behaviorList.nodeListAsset.list.Insert(behaviorList.nodeListAsset.list.Count(), node);
+                    Undo.RecordObject(behaviorListHolder.nodeListAsset, "Node moved bottom");
+                    behaviorListHolder.nodeListAsset.list.RemoveAt(i);
+                    behaviorListHolder.nodeListAsset.list.Insert(behaviorListHolder.nodeListAsset.list.Count(), node);
+                    hasListChanged = true;
                     break;
                 }
                 GUILayout.EndHorizontal();
@@ -130,7 +136,7 @@ namespace BehaviorNodePlugin
                 EditorGUI.BeginChangeCheck();
                 if (node.HasCustomInspector())
                 {
-                    node.createUIDescription(behaviorList, serializedObject);
+                    node.createUIDescription(behaviorListHolder, serializedObject);
                 }
                 else
                 {
@@ -141,6 +147,12 @@ namespace BehaviorNodePlugin
                     EditorUtility.SetDirty(node);
                 }
                 GUILayout.EndVertical();
+            }
+
+            if (hasListChanged)
+            {
+                EditorUtility.SetDirty(behaviorListHolder.nodeListAsset);
+                AssetDatabase.SaveAssets();
             }
         }
 
@@ -165,8 +177,10 @@ namespace BehaviorNodePlugin
                     return;
                 }
                 var assetCreator = new BehaviorNodeAssetCreator(config.GetPathToSaveNodeLists());
-                var newNode = assetCreator.CreateNodeAsset(behaviorList.nodeListAsset, sceneNodeTypesList[typeIndex]);
-                behaviorList.nodeListAsset.list.Add(newNode);
+                var newNode = assetCreator.CreateNodeAsset(behaviorListHolder.nodeListAsset, sceneNodeTypesList[typeIndex]);
+                behaviorListHolder.nodeListAsset.list.Add(newNode);
+                EditorUtility.SetDirty(behaviorListHolder);
+                AssetDatabase.SaveAssets();
             }
             GUILayout.EndHorizontal();
         }
@@ -227,8 +241,8 @@ namespace BehaviorNodePlugin
 
         void createNodeAsset(BehaviorNode node)
         {
-            string url = AssetDatabase.GetAssetPath(behaviorList.nodeListAsset);
-            int index = AssetDatabase.GetAssetPath(behaviorList.nodeListAsset).LastIndexOf("/");
+            string url = AssetDatabase.GetAssetPath(behaviorListHolder.nodeListAsset);
+            int index = AssetDatabase.GetAssetPath(behaviorListHolder.nodeListAsset).LastIndexOf("/");
             url = url.Substring(0, index);
             int fileName = 0;
             while (AssetDatabase.LoadAssetAtPath<BehaviorNode>(url + "/nodes/node" + fileName + ".asset") != null)

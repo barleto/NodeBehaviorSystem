@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System;
 
 namespace BehaviorNodePlugin
 {
@@ -80,6 +81,11 @@ namespace BehaviorNodePlugin
             }
             _currentBehaviorList = null;
             onBehaviorListEnd.Invoke();
+        }
+
+        internal void PlayList(object listHolder)
+        {
+            throw new NotImplementedException();
         }
     }
 }

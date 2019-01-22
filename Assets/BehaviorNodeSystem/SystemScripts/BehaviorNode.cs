@@ -49,7 +49,7 @@ namespace BehaviorNodePlugin
             _hasExecutionEnded = true;
         }
 
-        public bool HasExecutionEnded()
+        public virtual bool HasExecutionEnded()
         {
             return _hasExecutionEnded;
         }
