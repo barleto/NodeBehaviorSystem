@@ -310,10 +310,12 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             AssetDatabase.SaveAssets();
         }
 
-        if (GUI.Button(new Rect(node.windowPosition.width - 25, 0, 25, 16), "×⍆"))
+        if (GUI.Button(new Rect(node.windowPosition.width - 50, 0, 50, 16), "×Rec"))
         {
-            new VisualNodeAssetHelper().DeleteNodesRecursive(node, _currentRoot);
-            AssetDatabase.SaveAssets();
+            if (EditorUtility.DisplayDialog("Recursive delete","This will delete nodes recurssively. Are you sure you want to continue?", "Yes", "Cancel")) {
+                new VisualNodeAssetHelper().DeleteNodesRecursive(node, _currentRoot);
+                AssetDatabase.SaveAssets();
+            }
         }
     }
 
