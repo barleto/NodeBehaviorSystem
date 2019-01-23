@@ -31,7 +31,9 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         if (Selection.activeObject is VisualNodeRoot)
         {
             _currentRoot = Selection.activeObject as VisualNodeRoot;
+            _currentRoot.nodes.RemoveAll((o) => o == null);
         }
+        //lala
         Repaint();
     }
 
@@ -57,11 +59,23 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         EditorUtility.SetDirty(node);
     }
 
+    private void OnFocus()
+    {
+        if (_currentRoot != null)
+        {
+            _currentRoot.nodes.RemoveAll((o) => o == null);
+            foreach (var node in _currentRoot.nodes)
+            {
+               node.windowPosition.height = 0;
+            }
+        }
+    }
+
     private void OnGUI()
     {
         GUI.Box(new Rect(0, 0, position.width, 20), "");
         _currentRoot = (VisualNodeRoot)EditorGUILayout.ObjectField(_currentRoot, typeof(VisualNodeRoot));
-
+        
         if (_currentRoot == null)
         {
             GUILayout.Label("There is no VisualNodeRoot selected.");
@@ -84,28 +98,21 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         fullEditorSize.xMax = 0;
         fullEditorSize.yMax = 0;
 
-        //Draw node connections
-        for (int i = 0; i < _currentRoot.nodes.Count(); i++)
-        {
-            var node = _currentRoot.nodes[i];
-            if (node == null)
-            {
-                continue;
-            };
-            if (node.parent != null)
-            {
-                var parent = node.parent;
-                var nodeAsChildPos = parent.children.IndexOf(node);
-                var heightSector = parent.windowPosition.height / parent.ChildMax();
-                var curveRect = new Rect(
-                    parent.windowPosition.xMax,
-                    parent.windowPosition.y + heightSector * (nodeAsChildPos + 1) - heightSector / 2,
-                    0,
-                    0);
-                DrawNodeCurve(curveRect, node.windowPosition, parent.LineColor()[parent.children.IndexOf(node)]);
-            }
-        }
-        //draw node windows
+        DrawNodesConnections();
+
+        DrawNodeWindows();
+
+        GUI.EndScrollView();
+
+        ConnectingToParentEventCheck();
+
+        HandleContextClick();
+
+        HandleScrollDrag();
+    }
+
+    private void DrawNodeWindows()
+    {
         _nodeIndex = 0;
         BeginWindows();
         for (int i = 0; i < _currentRoot.nodes.Count(); i++)
@@ -135,14 +142,34 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             fullEditorSize.yMax = Mathf.Max(fullEditorSize.yMax, node.windowPosition.yMax);
         }
         EndWindows();
+    }
 
-        GUI.EndScrollView();
-
-        ConnectingToParentEventCheck();
-
-        HandleContextClick();
-
-        HandleScrollDrag();
+    private void DrawNodesConnections()
+    {
+        //Draw node connections
+        for (int i = 0; i < _currentRoot.nodes.Count(); i++)
+        {
+            var node = _currentRoot.nodes[i];
+            if (node == null)
+            {
+                continue;
+            };
+            for (int j = 0; j < node.children.Count(); j++)
+            {
+                var child = node.children[j];
+                if (child == null){
+                    continue;
+                }
+                var heightSector = node.windowPosition.height / node.ChildMax();
+                var curveRect = new Rect(
+                    node.windowPosition.xMax,
+                    node.windowPosition.y + heightSector * (j + 1) - heightSector / 2,
+                    0,
+                    0);
+                var lineColor = j < node.LineColor().Length ? node.LineColor()[j] : Color.gray;
+                DrawNodeCurve(curveRect, child.windowPosition, lineColor);
+            }
+        }
     }
 
     private void HandleScrollDrag()
@@ -313,7 +340,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
     private void DrawPlusButtonsOnNode(VisualNodeBase node, int i)
     {
         var childIndex = i;
-        var butLabel = node.ChildrenLabelsInEditor()[i];
+        var butLabel = i < node.ChildrenLabelsInEditor().Length ? node.ChildrenLabelsInEditor()[i] : "+";
         float windowFraction = node.windowPosition.height / node.ChildMax();
         var butRect = new Rect(
             node.windowPosition.xMax, 

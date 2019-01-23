@@ -20,7 +20,7 @@ public class BNode : VisualNodeBase
 
     public override Color[] LineColor()
     {
-        return new Color[] { Color.red, Color.green, Color.green };
+        return new Color[] { Color.red, Color.green };
     }
 #endif
 }
