@@ -18,6 +18,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
     Rect fullEditorSize = Rect.zero;
     private bool _isDragging;
     Vector2 lastMousePos;
+    float zoomScale = 1f;
 
     [MenuItem("Window/VisualNodeSystem")]
     static void ShowWindow()
@@ -33,7 +34,8 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             _currentRoot = Selection.activeObject as VisualNodeRoot;
             _currentRoot.nodes.RemoveAll((o) => o == null);
         }
-        //lala
+        zoomScale = 1f;
+        scrollPos = Vector2.zero;
         Repaint();
     }
 
@@ -73,6 +75,8 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
 
     private void OnGUI()
     {
+        ZoomWindow(1);
+
         GUI.Box(new Rect(0, 0, position.width, 20), "");
         _currentRoot = (VisualNodeRoot)EditorGUILayout.ObjectField(_currentRoot, typeof(VisualNodeRoot));
         
@@ -91,12 +95,22 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             return;
         }
 
+        if (Event.current.isScrollWheel)
+        {
+            zoomScale += Event.current.delta.y / 100;
+            if (zoomScale <= .1f)
+            {
+                zoomScale = .1f;
+            }
+        }
+
         //Begin scroll view
-        fullEditorSize.width += 100f;
-        fullEditorSize.height += 100f;
+        fullEditorSize.width += 50;
+        fullEditorSize.height += 50;
         scrollPos = GUI.BeginScrollView(new Rect(0, 20, position.width, position.height - 20), scrollPos, fullEditorSize);
         fullEditorSize.xMax = 0;
         fullEditorSize.yMax = 0;
+
 
         DrawNodesConnections();
 
@@ -199,7 +213,7 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
 
     private void HandleContextClick()
     {
-        if (Event.current.button == 1)
+        if (Event.current.button == 1 && mouseOverWindow == this)
         {
             Event.current.Use();
             var mousePos = Event.current.mousePosition;
@@ -385,5 +399,16 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             }
         }
         GUI.DragWindow();
+    }
+
+    private void ZoomWindow(float zoomScale)
+    {
+        //Scale gui matrix
+        Vector2 vanishingPoint = new Vector2(0, 20/zoomScale);
+        Matrix4x4 Translation = Matrix4x4.TRS(vanishingPoint, Quaternion.identity, Vector3.one);
+        Matrix4x4 Scale = Matrix4x4.Scale(new Vector3(zoomScale, zoomScale, 1.0f));
+        GUI.matrix = Translation * Scale * Translation.inverse;
+
+        //GUIUtility.ScaleAroundPivot(Vector2.one * zoomScale, Vector2.zero);
     }
 }
