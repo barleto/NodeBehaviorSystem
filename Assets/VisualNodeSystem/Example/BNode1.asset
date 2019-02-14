@@ -17,8 +17,9 @@ MonoBehaviour:
   parent: {fileID: 11400000, guid: b368632c568c8a349acc7b40e28aa7b8, type: 2}
   windowPosition:
     serializedVersion: 2
-    x: 553
-    y: 109
+    x: 562
+    y: 110
     width: 215
-    height: 59
+    height: 77
   flag: 0
+  maclavaaaaaa: 0

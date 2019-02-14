@@ -6,7 +6,6 @@ using UnityEngine;
 public class BNode : VisualNodeBase
 {
     public bool flag;
-    public string macalava;
 
     public override int ChildMax()
     {
