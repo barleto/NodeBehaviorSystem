@@ -91,6 +91,7 @@ public class VisualNodeAssetHelper {
 
         //delete asset
         UnityEngine.Object.DestroyImmediate(node, true);
+        AssetDatabase.SaveAssets();
     }
 
     public void DeleteNodesRecursive(VisualNodeBase node, VisualNodeRoot root)
@@ -123,5 +124,6 @@ public class VisualNodeAssetHelper {
 
         //delete asset
         UnityEngine.Object.DestroyImmediate(node, true);
+        AssetDatabase.SaveAssets();
     }
 }
