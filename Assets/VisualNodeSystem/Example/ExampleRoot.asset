@@ -1,0 +1,170 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f7936a36cc59f7408d1ae655db84af2, type: 3}
+  m_Name: ExampleRoot
+  m_EditorClassIdentifier: 
+  root: {fileID: 114051074876556778}
+  nodes:
+  - {fileID: 114051074876556778}
+  - {fileID: 114562681179794768}
+  - {fileID: 114161451693438582}
+  - {fileID: 114608086627553718}
+  - {fileID: 114041061232120154}
+  - {fileID: 114919950273825316}
+  - {fileID: 114390721557935540}
+--- !u!114 &114041061232120154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06333e35a11aa344ea5d97e79102379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children:
+  - {fileID: 0}
+  parent: {fileID: 114608086627553718}
+  windowPosition:
+    serializedVersion: 2
+    x: 845
+    y: 110
+    width: 215
+    height: 59
+  number: 0
+--- !u!114 &114051074876556778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06333e35a11aa344ea5d97e79102379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children:
+  - {fileID: 114562681179794768}
+  parent: {fileID: 0}
+  windowPosition:
+    serializedVersion: 2
+    x: 10
+    y: 33
+    width: 215
+    height: 59
+  number: 0
+--- !u!114 &114161451693438582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06333e35a11aa344ea5d97e79102379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children:
+  - {fileID: 114390721557935540}
+  parent: {fileID: 114562681179794768}
+  windowPosition:
+    serializedVersion: 2
+    x: 578
+    y: 17
+    width: 215
+    height: 59
+  number: 0
+--- !u!114 &114390721557935540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06333e35a11aa344ea5d97e79102379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children: []
+  parent: {fileID: 114161451693438582}
+  windowPosition:
+    serializedVersion: 2
+    x: 813
+    y: 17
+    width: 150
+    height: 0
+  number: 0
+--- !u!114 &114562681179794768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b42f47fd07dca489604007c514d56f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children:
+  - {fileID: 114161451693438582}
+  - {fileID: 114608086627553718}
+  parent: {fileID: 114051074876556778}
+  windowPosition:
+    serializedVersion: 2
+    x: 288
+    y: 33
+    width: 215
+    height: 59
+  flag: 0
+--- !u!114 &114608086627553718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b42f47fd07dca489604007c514d56f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children:
+  - {fileID: 114041061232120154}
+  - {fileID: 114919950273825316}
+  parent: {fileID: 114562681179794768}
+  windowPosition:
+    serializedVersion: 2
+    x: 568
+    y: 139
+    width: 215
+    height: 59
+  flag: 0
+--- !u!114 &114919950273825316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06333e35a11aa344ea5d97e79102379a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  children:
+  - {fileID: 0}
+  parent: {fileID: 114608086627553718}
+  windowPosition:
+    serializedVersion: 2
+    x: 847
+    y: 222
+    width: 215
+    height: 59
+  number: 0

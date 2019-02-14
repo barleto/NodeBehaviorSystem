@@ -52,7 +52,7 @@ public class VisualNodeAssetHelper {
         var newNode = ScriptableObject.CreateInstance(type);
         try
         {
-            AssetDatabase.CreateAsset(newNode, nodeFinalPath);
+            AssetDatabase.AddObjectToAsset(newNode, root);
         }
         catch (Exception e)
         {
@@ -90,8 +90,7 @@ public class VisualNodeAssetHelper {
         EditorUtility.SetDirty(root);
 
         //delete asset
-        var path = AssetDatabase.GetAssetPath(node);
-        AssetDatabase.DeleteAsset(path);
+        UnityEngine.Object.DestroyImmediate(node, true);
     }
 
     public void DeleteNodesRecursive(VisualNodeBase node, VisualNodeRoot root)
@@ -123,7 +122,6 @@ public class VisualNodeAssetHelper {
         EditorUtility.SetDirty(root);
 
         //delete asset
-        var path = AssetDatabase.GetAssetPath(node);
-        AssetDatabase.DeleteAsset(path);
+        UnityEngine.Object.DestroyImmediate(node, true);
     }
 }
