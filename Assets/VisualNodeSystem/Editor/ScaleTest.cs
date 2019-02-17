@@ -26,6 +26,8 @@ public class ZoomTestWindow : EditorWindow
         GUI.Box(new Rect(Vector2.zero, new Vector2(position.width*2, position.height*2)), "Zoomed Box");
         GUILayout.Button("Zoomed Button 1");
         GUILayout.Button("Zoomed Button 2");
+        GUI.Button(new Rect(position.width * 2 - 200, position.height * 2 - 200, 200,200), "fim");
+        GUI.Button(new Rect(position.width * 2 - 20, position.height * 2 - 20, 20, 20), "X");
 
         editorZoomArea.End();
     }
@@ -62,10 +64,11 @@ public class EditorZoomArea
     private const float kZoomMin = 0.3f;
     private const float kZoomMax = 3.0f;
     private const float wheelSensibility = 100.0f;
+    Vector2 contentPosition = Vector2.zero;
 
     public Rect Begin(Rect viewArea, Rect contentArea)
     {
-        _viewArea = viewArea;
+        _viewArea = SetCorrectViewArea(viewArea);
         _contentArea = changeContentAreaToFitViewIfNecessary(contentArea);
         _contentArea.position = Vector2.zero;
         HandleEvents();
@@ -82,6 +85,13 @@ public class EditorZoomArea
         GUILayout.BeginArea(new Rect(_zoomCoordsOrigin.x, _zoomCoordsOrigin.y, contentArea.width, contentArea.height));
 
         return clippedArea;
+    }
+
+    private Rect SetCorrectViewArea(Rect viewArea)
+    {
+        viewArea.width -= 13;
+        viewArea.height -= 17;
+        return viewArea;
     }
 
     private Rect changeContentAreaToFitViewIfNecessary(Rect contentArea)
@@ -137,6 +147,17 @@ public class EditorZoomArea
             
             Event.current.Use();
         }
+
+        ClampZoomedContentPosition();
+    }
+
+    private void ClampZoomedContentPosition()
+    {
+        _zoomCoordsOrigin.x = Mathf.Clamp(_zoomCoordsOrigin.x, (-_contentArea.ScaleSizeBy(_zoom, Vector2.zero).width + _viewArea.width) /_zoom, 0);
+        _zoomCoordsOrigin.y = Mathf.Clamp(_zoomCoordsOrigin.y, (-_contentArea.ScaleSizeBy(_zoom, Vector2.zero).height + _viewArea.height) /_zoom, 0);
+        var widthScrollSize = _viewArea.width / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).width;
+        contentPosition.x = Mathf.Abs(_zoomCoordsOrigin.x) / Mathf.Abs((-_contentArea.ScaleSizeBy(_zoom, Vector2.zero).width + _viewArea.width) / _zoom);
+        contentPosition.y = Mathf.Abs(_zoomCoordsOrigin.y) / Mathf.Abs((-_contentArea.ScaleSizeBy(_zoom, Vector2.zero).height + _viewArea.height) / _zoom);
     }
 
     private Vector2 ConvertScreenCoordsToZoomCoords(Vector2 screenCoords)
@@ -161,21 +182,21 @@ public class EditorZoomArea
 
     private void DrawScrollBars()
     {
-        var widthScrollSize = _viewArea.width / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).width;
+        var widthScrollSize = (_viewArea.width / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).width);
         if (widthScrollSize < 1)
         {
-            GUI.HorizontalScrollbar(new Rect(new Vector2(_viewArea.x, _viewArea.height - 17), new Vector2(_viewArea.width - 13, 17)),
-                .1f,
+            contentPosition.x =  GUI.HorizontalScrollbar(new Rect(new Vector2(_viewArea.x, _viewArea.height), new Vector2(_viewArea.width, 17)),
+                Mathf.Lerp(0,1- widthScrollSize, contentPosition.x),
                 widthScrollSize,
-                0,
-                1);
+                0f,
+                1f);
         }
 
-        var heightScrollSize = _viewArea.height / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).height;
+        var heightScrollSize = (_viewArea.height / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).height);
         if (heightScrollSize < 1)
         {
-            GUI.VerticalScrollbar(new Rect(new Vector2(_viewArea.width - 13, -1), new Vector2(17 , _viewArea.height - 16)),
-                .1f,
+            contentPosition.y = GUI.VerticalScrollbar(new Rect(new Vector2(_viewArea.width, -1), new Vector2(17 , _viewArea.height)),
+                Mathf.Lerp(0, 1 - heightScrollSize, contentPosition.y),
                 heightScrollSize,
                 0,
                 1);
