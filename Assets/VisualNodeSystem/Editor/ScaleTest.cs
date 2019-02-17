@@ -20,10 +20,10 @@ public class ZoomTestWindow : EditorWindow
     {
         // Within the zoom area all coordinates are relative to the top left corner of the zoom area
         // with the width and height being scaled versions of the original/unzoomed area's width and height.
-        editorZoomArea.Begin(new Rect(Vector2.zero, position.size), new Rect(Vector2.zero, position.size*2));
+        editorZoomArea.Begin(new Rect(Vector2.zero, position.size), new Rect(Vector2.zero, new Vector2(position.width*2, position.height*2)));
 
         // You can also use GUILayout inside the zoomed area.
-        GUI.Box(new Rect(Vector2.zero, position.size*2), "Zoomed Box");
+        GUI.Box(new Rect(Vector2.zero, new Vector2(position.width*2, position.height*2)), "Zoomed Box");
         GUILayout.Button("Zoomed Button 1");
         GUILayout.Button("Zoomed Button 2");
 
@@ -79,7 +79,7 @@ public class EditorZoomArea
         Matrix4x4 translation = Matrix4x4.TRS(clippedArea.TopLeft(), Quaternion.identity, Vector3.one);
         Matrix4x4 scale = Matrix4x4.Scale(new Vector3(_zoom, _zoom, 1.0f));
         GUI.matrix = translation * scale * translation.inverse * GUI.matrix;
-        GUILayout.BeginArea(new Rect(_zoomCoordsOrigin.x, _zoomCoordsOrigin.y, _viewArea.width, _viewArea.height));
+        GUILayout.BeginArea(new Rect(_zoomCoordsOrigin.x, _zoomCoordsOrigin.y, contentArea.width, contentArea.height));
 
         return clippedArea;
     }
@@ -164,7 +164,7 @@ public class EditorZoomArea
         var widthScrollSize = _viewArea.width / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).width;
         if (widthScrollSize < 1)
         {
-            GUI.HorizontalScrollbar(new Rect(new Vector2(_viewArea.x, _viewArea.height - 17), new Vector2(_viewArea.width - 17, 17)),
+            GUI.HorizontalScrollbar(new Rect(new Vector2(_viewArea.x, _viewArea.height - 17), new Vector2(_viewArea.width - 13, 17)),
                 .1f,
                 widthScrollSize,
                 0,
@@ -174,7 +174,7 @@ public class EditorZoomArea
         var heightScrollSize = _viewArea.height / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).height;
         if (heightScrollSize < 1)
         {
-            GUI.VerticalScrollbar(new Rect(new Vector2(_viewArea.width - 17, 0), new Vector2(17 , _viewArea.height - 17)),
+            GUI.VerticalScrollbar(new Rect(new Vector2(_viewArea.width - 13, -1), new Vector2(17 , _viewArea.height - 16)),
                 .1f,
                 heightScrollSize,
                 0,
