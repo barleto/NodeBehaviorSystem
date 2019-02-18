@@ -127,8 +127,6 @@ public class EditorZoomArea
             {
                 _zoomCoordsOrigin = Vector2.zero;
             }
-            //_zoomCoordsOrigin.x = Mathf.Min(0f, _zoomCoordsOrigin.x);
-            //_zoomCoordsOrigin.y = Mathf.Min(0f, _zoomCoordsOrigin.y);
             Event.current.Use();
         }
 
@@ -141,8 +139,6 @@ public class EditorZoomArea
             Vector2 delta = Event.current.delta;
             delta /= _zoom;
             Rect zoomMovedContentArea = new Rect(_zoomCoordsOrigin + delta, _contentArea.ScaleSizeBy(_zoom, Vector2.zero).size);
-            //zoomMovedContentArea.x = Mathf.Min(0f, zoomMovedContentArea.x);
-            //zoomMovedContentArea.y = Mathf.Min(0f, zoomMovedContentArea.y);
             _zoomCoordsOrigin = zoomMovedContentArea.position;
             
             Event.current.Use();
@@ -182,10 +178,12 @@ public class EditorZoomArea
 
     private void DrawScrollBars()
     {
+        EditorGUI.BeginChangeCheck();
+        Vector2 newScrollPos = new Vector2(contentPosition.x, contentPosition.y);
         var widthScrollSize = (_viewArea.width / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).width);
         if (widthScrollSize < 1)
         {
-            contentPosition.x =  GUI.HorizontalScrollbar(new Rect(new Vector2(_viewArea.x, _viewArea.height), new Vector2(_viewArea.width, 17)),
+            newScrollPos.x =  GUI.HorizontalScrollbar(new Rect(new Vector2(_viewArea.x, _viewArea.height), new Vector2(_viewArea.width, 17)),
                 Mathf.Lerp(0,1- widthScrollSize, contentPosition.x),
                 widthScrollSize,
                 0f,
@@ -195,11 +193,21 @@ public class EditorZoomArea
         var heightScrollSize = (_viewArea.height / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).height);
         if (heightScrollSize < 1)
         {
-            contentPosition.y = GUI.VerticalScrollbar(new Rect(new Vector2(_viewArea.width, -1), new Vector2(17 , _viewArea.height)),
+            newScrollPos.y = GUI.VerticalScrollbar(new Rect(new Vector2(_viewArea.width, -1), new Vector2(17 , _viewArea.height)),
                 Mathf.Lerp(0, 1 - heightScrollSize, contentPosition.y),
                 heightScrollSize,
                 0,
                 1);
+        }
+        
+        if (newScrollPos.x != contentPosition.x) {
+            contentPosition.x = newScrollPos.x/ (1 - widthScrollSize);
+            _zoomCoordsOrigin.x = -contentPosition.x * Mathf.Abs((-_contentArea.ScaleSizeBy(_zoom, Vector2.zero).width + _viewArea.width) / _zoom);
+        }
+
+        if(newScrollPos.y != contentPosition.y) {
+            contentPosition.y = newScrollPos.y / (1 - heightScrollSize);
+            _zoomCoordsOrigin.y = -contentPosition.y * Mathf.Abs((-_contentArea.ScaleSizeBy(_zoom, Vector2.zero).height + _viewArea.height) / _zoom);
         }
     }
 
