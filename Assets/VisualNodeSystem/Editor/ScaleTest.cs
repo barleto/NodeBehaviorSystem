@@ -182,7 +182,6 @@ public class EditorZoomArea
     public void ResetZoom()
     {
         _zoom = 1;
-        _zoomCoordsOrigin = Vector2.zero;
     }
 
     public void End()
