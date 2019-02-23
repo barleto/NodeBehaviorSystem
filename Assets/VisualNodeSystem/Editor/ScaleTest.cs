@@ -20,14 +20,14 @@ public class ZoomTestWindow : EditorWindow
     {
         // Within the zoom area all coordinates are relative to the top left corner of the zoom area
         // with the width and height being scaled versions of the original/unzoomed area's width and height.
-        editorZoomArea.Begin(new Rect(Vector2.zero, position.size), new Rect(Vector2.zero, new Vector2(position.width*2, position.height*2)));
+        editorZoomArea.Begin(new Rect(Vector2.zero, position.size), new Rect(Vector2.zero, new Vector2(position.width, position.height*2)));
 
         // You can also use GUILayout inside the zoomed area.
         GUI.Box(new Rect(Vector2.zero, new Vector2(position.width*2, position.height*2)), "Zoomed Box");
         GUILayout.Button("Zoomed Button 1");
         GUILayout.Button("Zoomed Button 2");
         GUI.Button(new Rect(position.width * 2 - 200, position.height * 2 - 200, 180,200), "fim");
-        GUI.Button(new Rect(position.width * 2 - 20, position.height * 2 - 20, 20, 20), "X");
+        GUI.Button(new Rect(position.width  - 20, position.height*2 - 20, 20, 20), "X");
 
         editorZoomArea.End();
     }
@@ -66,6 +66,11 @@ public class EditorZoomArea
     private const float wheelSensibility = 100.0f;
     Vector2 contentPosition = Vector2.zero;
 
+    public float GetZoom()
+    {
+        return _zoom;
+    }
+
     public Rect Begin(Rect viewArea, Rect contentArea)
     {
         _viewArea = SetCorrectViewArea(viewArea);
@@ -89,8 +94,18 @@ public class EditorZoomArea
 
     private Rect SetCorrectViewArea(Rect viewArea)
     {
-        viewArea.width -= 13;
-        viewArea.height -= 17;
+        var widthScrollSize = (_viewArea.width / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).width);
+        if (widthScrollSize < 1)
+        {
+            viewArea.height -= 17;
+        }
+        var heightScrollSize = (_viewArea.height / _contentArea.ScaleSizeBy(_zoom, Vector2.zero).height);
+        if (heightScrollSize < 1)
+        {
+            viewArea.width -= 13;
+        }
+        //viewArea.width -= 13;
+        //viewArea.height -= 17;
         return viewArea;
     }
 
@@ -140,14 +155,14 @@ public class EditorZoomArea
             delta /= _zoom;
             Rect zoomMovedContentArea = new Rect(_zoomCoordsOrigin + delta, _contentArea.ScaleSizeBy(_zoom, Vector2.zero).size);
             _zoomCoordsOrigin = zoomMovedContentArea.position;
-            if (_zoom == CalculateMinZoom())
-            {
-                _zoomCoordsOrigin = Vector2.zero;
-            }
             Event.current.Use();
         }
 
         ClampZoomedContentPosition();
+        if (_zoom == CalculateMinZoom())
+        {
+            _zoomCoordsOrigin = Vector2.zero;
+        }
     }
 
     private void ClampZoomedContentPosition()

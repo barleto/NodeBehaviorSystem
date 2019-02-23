@@ -57,8 +57,8 @@ MonoBehaviour:
   parent: {fileID: 0}
   windowPosition:
     serializedVersion: 2
-    x: 10
-    y: 33
+    x: 0
+    y: 0
     width: 215
     height: 59
   number: 0
@@ -94,14 +94,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06333e35a11aa344ea5d97e79102379a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children: []
+  children:
+  - {fileID: 0}
   parent: {fileID: 114161451693438582}
   windowPosition:
     serializedVersion: 2
-    x: 813
-    y: 17
-    width: 150
-    height: 0
+    x: 853
+    y: 18
+    width: 215
+    height: 59
   number: 0
 --- !u!114 &114562681179794768
 MonoBehaviour:
@@ -142,8 +143,8 @@ MonoBehaviour:
   parent: {fileID: 114562681179794768}
   windowPosition:
     serializedVersion: 2
-    x: 568
-    y: 139
+    x: 562.6234
+    y: 141.6883
     width: 215
     height: 59
   flag: 0
@@ -163,8 +164,8 @@ MonoBehaviour:
   parent: {fileID: 114608086627553718}
   windowPosition:
     serializedVersion: 2
-    x: 847
-    y: 222
+    x: 854.67334
+    y: 201.55261
     width: 215
     height: 59
   number: 0

@@ -73,9 +73,10 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
         }
     }
 
+    private EditorZoomArea editorZoomArea = new EditorZoomArea();
+
     private void OnGUI()
     {
-        ZoomWindow(1);
 
         GUI.Box(new Rect(0, 0, position.width, 20), "");
         _currentRoot = (VisualNodeRoot)EditorGUILayout.ObjectField(_currentRoot, typeof(VisualNodeRoot));
@@ -104,19 +105,24 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             }
         }
 
+        if (Event.current.keyCode == KeyCode.R)
+        {
+            editorZoomArea.ResetZoom();
+            Event.current.Use();
+        }
+
         //Begin scroll view
         fullEditorSize.width += 50;
         fullEditorSize.height += 50;
-        scrollPos = GUI.BeginScrollView(new Rect(0, 20, position.width, position.height - 20), scrollPos, fullEditorSize);
+        editorZoomArea.Begin(new Rect(0, 20, position.width, position.height), fullEditorSize);
         fullEditorSize.xMax = 0;
         fullEditorSize.yMax = 0;
-
 
         DrawNodesConnections();
 
         DrawNodeWindows();
 
-        GUI.EndScrollView();
+        editorZoomArea.End();
 
         ConnectingToParentEventCheck();
 
@@ -399,16 +405,5 @@ public class VisualNodeSystemEditorWindow : EditorWindow {
             }
         }
         GUI.DragWindow();
-    }
-
-    private void ZoomWindow(float zoomScale)
-    {
-        //Scale gui matrix
-        Vector2 vanishingPoint = new Vector2(0, 20/zoomScale);
-        Matrix4x4 Translation = Matrix4x4.TRS(vanishingPoint, Quaternion.identity, Vector3.one);
-        Matrix4x4 Scale = Matrix4x4.Scale(new Vector3(zoomScale, zoomScale, 1.0f));
-        GUI.matrix = Translation * Scale * Translation.inverse;
-
-        //GUIUtility.ScaleAroundPivot(Vector2.one * zoomScale, Vector2.zero);
     }
 }
